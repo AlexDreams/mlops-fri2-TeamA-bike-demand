@@ -86,3 +86,68 @@ python -m bike_demand.train --config configs/baseline.yaml
 ```
 
 The models will be saved in `artifacts/`, the metrics in `reports/`, and the MLflow logs in `tracking/mlflow.db`.
+
+
+## Lab 3 – Docker Build and Rerun
+
+Lab 3 reproduces the Lab 2 baseline in a clean Docker environment using Python 3.12 and the committed `uv.lock` file. Docker Desktop (or Docker Engine) must be installed and running.
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/reinoD15/mlops-fri2-TeamA-bike-demand.git
+cd mlops-fri2-TeamA-bike-demand/bike-demand
+```
+
+Run the following commands from the `bike-demand` directory containing the `Dockerfile`, `.dockerignore`, `pyproject.toml`, and `uv.lock`.
+
+### 2. Build the Docker image
+
+```bash
+docker build -t bike-demand:lab3 .
+```
+
+The Dockerfile installs dependencies using `uv sync --locked`. For a build without reusing cached Docker layers, use:
+
+```bash
+docker build --no-cache -t bike-demand:lab3 .
+```
+
+### 3. Rerun the Lab 2 baseline
+
+```bash
+docker run --rm bike-demand:lab3
+```
+
+The container runs the baseline training pipeline using the frozen `data/raw/hour.csv` dataset and `configs/baseline.yaml`. It uses the same chronological split as Lab 2 and does not evaluate on the held-out test partition.
+
+Expected validation results:
+
+| Model | Validation MAE |
+| --- | ---: |
+| Naive train-mean baseline | 154.23179306864967 |
+| Random Forest | 86.84685685591091 |
+
+The expected split contains 8,645 training rows, 4,358 validation rows, and 4,376 held-out test rows. The raw data SHA-256 is `e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f`.
+
+MLflow run IDs can differ across executions. Compare the data hash, split, configuration, validation MAEs, and saved-model readback checks instead.
+
+### 4. Record reproducibility information
+
+```bash
+git rev-parse HEAD
+docker image inspect bike-demand:lab3 --format '{{.Id}}'
+```
+
+Keep the build and run logs together with the Git commit and Docker image ID for the Lab 3 team report. The report should link the raw logs and the commit used for the rerun.
+
+### 5. Optional local lockfile verification
+
+If uv is installed on the host:
+
+```bash
+uv lock --check
+uv sync --locked
+```
+
+A missing or outdated lockfile must be treated as an error rather than silently regenerated during the locked checks.
