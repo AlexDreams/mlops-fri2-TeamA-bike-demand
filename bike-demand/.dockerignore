@@ -4,7 +4,7 @@
 **/*.py[cod]
 .pytest_cache
 .ruff_cache
-artifacts
+
 tracking
 reports/images
 reports/metrics.json
