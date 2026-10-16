@@ -18,6 +18,7 @@ RUN uv sync --locked --no-install-project
 COPY data ./data
 COPY configs ./configs
 COPY src ./src
+COPY artifacts/model.joblib artifacts/model-metadata.json ./artifacts/
 RUN uv sync --locked
 
 COPY README.md ./
@@ -25,4 +26,5 @@ COPY reports/week-01-team.md ./reports/week-01-team.md
 COPY .github/workflows/ci.yml ./.github/workflows/ci.yml
 COPY tests ./tests
 
-CMD ["uv", "run", "--locked", "python", "-m", "bike_demand.train", "--config", "configs/baseline.yaml"]
+EXPOSE 8000
+CMD ["uv", "run", "--locked", "uvicorn", "bike_demand.api:app", "--host", "0.0.0.0", "--port", "8000"]
