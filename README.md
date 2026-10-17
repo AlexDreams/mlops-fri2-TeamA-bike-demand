@@ -88,7 +88,7 @@ python -m bike_demand.train --config configs/baseline.yaml
 The models will be saved in `artifacts/`, the metrics in `reports/`, and the MLflow logs in `tracking/mlflow.db`.
 
 
-## Lab 3 – Docker Build and Rerun
+## Lab 3 - Docker Build and Rerun
 
 Lab 3 reproduces the Lab 2 baseline in a clean Docker environment using Python 3.12 and the committed `uv.lock` file. Docker Desktop (or Docker Engine) must be installed and running.
 
@@ -151,3 +151,117 @@ uv sync --locked
 ```
 
 A missing or outdated lockfile must be treated as an error rather than silently regenerated during the locked checks.
+
+## Lab 4 - FastAPI model serving
+
+Lab 4 serves the already-trained model through FastAPI. The application loads the saved model and metadata on startup; it **does not retrain** the model to handle requests.
+
+### Endpoints
+
+| Method | Path | Expected behavior |
+| --- | --- | --- |
+| `GET` | `/health` | `200` with model status and version; `503` if model unavailable |
+| `POST` | `/predict` | `200` with a finite, nonnegative `prediction` and metadata-derived `model_version` |
+| `POST` | `/predict` | `422` for invalid request data; `503` if model unavailable |
+
+Interactive API documentation is available at `/docs` while the server is running.
+
+### Prediction schema
+
+Exactly 12 fields are required; missing or extra fields are rejected. Pydantic uses strict numeric types and checks the allowed domains.
+
+| Feature | Type | Allowed values |
+| --- | --- | --- |
+| `season` | Integer | 1–4 |
+| `yr` | Integer | 0–1 |
+| `mnth` | Integer | 1–12 |
+| `hr` | Integer | 0–23 |
+| `holiday` | Integer | 0–1 |
+| `weekday` | Integer | 0–6 |
+| `workingday` | Integer | 0–1 |
+| `weathersit` | Integer | 1–4 |
+| `temp` | Float | Finite, 0–1 |
+| `atemp` | Float | Finite, 0–1 |
+| `hum` | Float | Finite, 0–1 |
+| `windspeed` | Float | Finite, 0–1 |
+
+### Start the API locally
+
+Ensure `artifacts/model.joblib` and `artifacts/model-metadata.json` exist and match.
+
+```bash
+uv sync --locked
+uv run --locked uvicorn bike_demand.api:app --host 127.0.0.1 --port 8000
+```
+
+Test health from a second terminal:
+
+```bash
+curl http://localhost:8000/health
+```
+
+Example prediction:
+
+```bash
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "season": 1,
+    "yr": 1,
+    "mnth": 1,
+    "hr": 23,
+    "holiday": 1,
+    "weekday": 6,
+    "workingday": 1,
+    "weathersit": 1,
+    "temp": 1.0,
+    "atemp": 1.0,
+    "hum": 1.0,
+    "windspeed": 1.0
+  }'
+```
+
+The response contains `prediction` and `model_version`. The numerical prediction depends on the saved model.
+
+### Run the API in Docker
+
+The Lab 4 Dockerfile copies the model artifacts and starts Uvicorn rather than training a model.
+
+```bash
+docker build -t bike-demand:lab4 .
+docker run --rm --name bike-api -p 8000:8000 bike-demand:lab4
+```
+
+In another terminal:
+
+```bash
+curl http://localhost:8000/health
+```
+
+To stop the API:
+
+```bash
+docker stop bike-api
+```
+
+### Verification and model integrity
+
+```bash
+uv run --locked ruff check .
+uv run --locked ruff format --check .
+uv run --locked pytest -q
+docker run --rm bike-demand:lab4 uv run --locked pytest -q
+```
+
+The team recorded **78 passing tests** inside Docker (with one non-blocking MLflow/SQLAlchemy deprecation warning). This test result was recorded before the final Docker-serving PR; rerun tests on the merged `main` revision for final release evidence.
+
+At startup, the API verifies that both artifact files exist, the model SHA256 matches its metadata and the feature order matches the expected schema. If these checks fail, the model is unavailable and the API responds with `503`.
+
+To collect reproducibility identifiers:
+
+```bash
+docker image inspect bike-demand:lab4 --format '{{.Id}}'
+uv run --locked python -c "from pathlib import Path; from bike_demand.preflight import sha256; print(sha256(Path('artifacts/model.joblib')))"
+```
+
+Record the image ID, model hash, model version, test output and actual HTTP responses in the Week 2 team report. The milestone tag `m2` should be created only after the final merged revision and reports have been verified.
