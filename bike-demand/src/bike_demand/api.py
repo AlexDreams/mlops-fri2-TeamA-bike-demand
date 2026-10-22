@@ -39,7 +39,39 @@ def create_app(artifacts: Path = ARTIFACTS) -> FastAPI:
         yield
 
     app = FastAPI(title="bike-demand", lifespan=lifespan)
+    @app.middleware("http")
+    async def log_requests(request: Request, call_next):
+        started = time.perf_counter()
+        request_id = str(uuid.uuid4())
+        status_code = 500
 
+        try:
+            response = await call_next(request)
+            status_code = response.status_code
+            response.headers["X-Request-ID"] = request_id
+            return response
+        finally:
+            loaded = getattr(app.state, "loaded", None)
+            model_version = (
+                loaded["metadata"].get("model_version")
+                if loaded is not None
+                else None
+            )
+
+            event = {
+                "event": "http_request",
+                "request_id": request_id,
+                "method": request.method,
+                "path": request.url.path,
+                "status_code": status_code,
+                "latency_ms": round(
+                    (time.perf_counter() - started) * 1000, 2
+                ),
+                "model_version": model_version,
+                "code_revision": CODE_REVISION,
+            }
+
+            logger.info(json.dumps(event, separators=(",", ":")))
     @app.get("/health")
     def health() -> dict:
         loaded = app.state.loaded
