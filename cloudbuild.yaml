@@ -35,3 +35,6 @@ images:
   - "europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mlops-fri2-teama-bike-demand:$COMMIT_SHA"
 
 timeout: "1200s"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
