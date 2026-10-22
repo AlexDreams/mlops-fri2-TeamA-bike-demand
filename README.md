@@ -49,8 +49,8 @@ The minimal architecture expected by the preflight verification pipeline is as f
 *(Note: The `artifacts/`, `reports/`, and `tracking/` directories will be generated automatically during execution).*
 
 ## Work to be Done (Expected Failures)
-
-Several critical functions currently raise a `NotImplementedError`. This is the core task of Lab 2. You must complete the code in the following files:
+Historical note: This section describes the original Lab 2 starter tasks. The implementations were completed during the earlier labs and are no longer pending work.
+The following functions were originally provided as incomplete starter tasks for Lab 2 and have since been implemented:
 
 1. **`validate.py`**: Complete `check_domains()` to validate value domains, finite ranges, and date windows.
 2. **`split.py`**: Implement `split_data()` to assign sorted, non-empty, disjoint, and complete partitions chronologically.
@@ -95,7 +95,7 @@ Lab 3 reproduces the Lab 2 baseline in a clean Docker environment using Python 3
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/reinoD15/mlops-fri2-TeamA-bike-demand.git
+git clone https://github.com/AlexDreams/mlops-fri2-TeamA-bike-demand.git
 cd mlops-fri2-TeamA-bike-demand/bike-demand
 ```
 
@@ -351,4 +351,173 @@ A deployed service should expose a predictable HTTP API, validate prediction req
 
 A controlled failure test should document the failure, the HTTP response, the relevant logs, and the state of the service afterward. For example, if the model is unavailable at startup, the API should return HTTP 503 from /health and /predict. The exact remaining container, image, and log state must be confirmed from the actual test.
 
+## Lab 5 — Cloud Run Deployment and Verification
 
+### Deployment overview
+
+The Bike Demand API is deployed on Google Cloud Run using a Docker image built by Google Cloud Build.
+
+Deployment configuration:
+
+- **Google Cloud project:** `mlops-demo-512323`
+- **Cloud Run service:** `mlops-fri2-teama-bike-demand`
+- **Cloud Run region:** `europe-west1`
+- **Container port:** `8000`
+- **Build configuration:** `cloudbuild.yaml` at the repository root
+- **Dockerfile:** `bike-demand/Dockerfile`
+- **Container registry:** Google Artifact Registry (`cloud-run-source-deploy`)
+- **Git branch used for deployment:** `main`
+
+The Cloud Build trigger runs the following steps:
+
+1. Build the Docker image from the `bike-demand/` directory.
+2. Pass the Git commit SHA to Docker using the `BIKE_DEMAND_REVISION` build argument.
+3. Push the tagged image to Artifact Registry.
+4. Deploy the image to the existing Cloud Run service.
+
+The deployed application loads the saved model artifacts at startup. It does not retrain the model when handling HTTP requests.
+
+### Deployment identity and readiness
+
+The `GET /health` endpoint reports whether the model is ready and identifies both the deployed model and the application code revision.
+
+A successful response observed during Lab 5 was:
+
+```json
+{
+  "status": "ok",
+  "model_version": "baseline-f01a22df4c39",
+  "code_revision": "224b177c55ad19474804899da0e59b7f59864bc2"
+}
+```
+
+The `model_version` identifies the saved machine learning model. The `code_revision` identifies the Git commit used to build the deployed application.
+
+The code revision is injected during the Docker build using:
+
+```bash
+docker build \
+  --build-arg BIKE_DEMAND_REVISION=$COMMIT_SHA \
+  -t IMAGE_NAME \
+  -f Dockerfile \
+  .
+```
+
+The SHA shown above is an example from a verified deployment. It will change when a different Git commit is deployed.
+
+### Accessing the private Cloud Run service
+
+The Cloud Run service requires authentication. Anonymous HTTP requests are not permitted.
+
+On Windows PowerShell, an authenticated health check can be performed with:
+
+```powershell
+$URL = "https://mlops-fri2-teama-bike-demand-709271018248.europe-west1.run.app"
+$TOKEN = gcloud.cmd auth print-identity-token
+
+Invoke-RestMethod -Uri "$URL/health" -Headers @{Authorization = "Bearer $TOKEN"}
+```
+
+The Google Cloud CLI must be installed and authenticated with an account authorized to invoke the service.
+
+Access tokens must not be committed to Git or written to application logs.
+
+### External deployment verification
+
+The repository includes `bike-demand/scripts/verify_deployment.py`.
+
+This script sends an HTTP request to `/health` and checks:
+
+- HTTP status code is `200`.
+- Application status is `ok`.
+- The observed model version matches the expected model version.
+- The observed code revision matches the expected Git revision.
+
+The script prints `Deployment verification PASSED` and exits with code `0` when all checks succeed. Otherwise, it prints `Deployment verification FAILED` and exits with code `1`.
+
+Because the deployed Cloud Run service is private, a local authenticated proxy can be used without modifying the verification script.
+
+Start the proxy in one PowerShell terminal:
+
+```powershell
+gcloud.cmd run services proxy mlops-fri2-teama-bike-demand --project mlops-demo-512323 --region europe-west1 --port 8080
+```
+
+Keep this terminal open while running the verification commands.
+
+From the repository root, in a second PowerShell terminal, run the successful verification:
+
+```powershell
+python .\bike-demand\scripts\verify_deployment.py --url http://127.0.0.1:8080 --expected-model baseline-f01a22df4c39 --expected-revision 224b177c55ad19474804899da0e59b7f59864bc2
+```
+
+Expected final output:
+
+```text
+Deployment verification PASSED
+```
+
+A deliberate failure can be tested by providing an incorrect expected model version:
+
+```powershell
+python .\bike-demand\scripts\verify_deployment.py --url http://127.0.0.1:8080 --expected-model mauvaise-version --expected-revision 224b177c55ad19474804899da0e59b7f59864bc2
+```
+
+Expected final output:
+
+```text
+Deployment verification FAILED
+```
+
+This negative test does not modify the deployed model or application. It demonstrates that the verifier correctly detects a version mismatch.
+
+For future deployments, replace the example SHA with the actual revision returned by `/health`.
+
+### Structured application logs
+
+The API produces structured JSON logs for HTTP requests.
+
+An observed log entry from the deployed service was:
+
+```json
+{
+  "event": "http_request",
+  "method": "GET",
+  "path": "/health",
+  "status_code": 200,
+  "latency_ms": 4.89,
+  "request_id": "26be6487-b32f-4bba-b35a-a66083886bdf",
+  "model_version": "baseline-f01a22df4c39",
+  "code_revision": "224b177c55ad19474804899da0e59b7f59864bc2"
+}
+```
+
+These fields make it possible to identify the requested endpoint, HTTP result, processing time, request identifier, model version, and deployed code revision.
+
+To inspect these logs:
+
+1. Open Google Cloud Console.
+2. Navigate to **Cloud Run**.
+3. Select the `mlops-fri2-teama-bike-demand` service.
+4. Open **Logs**.
+5. Find a request to `/health` and expand the corresponding structured application log entry.
+
+Application logs must not contain passwords, access tokens, API keys, or raw sensitive request data.
+
+### Security and cost considerations
+
+The service is configured to require authenticated access rather than allowing anonymous public invocation.
+
+The local Cloud Run proxy should be stopped after verification by pressing `Ctrl+C` in the terminal running the proxy.
+
+Cloud Run scaling settings, including minimum and maximum instances, should be reviewed to avoid unnecessary resource usage. The service should remain available only as long as required for project evaluation.
+
+### Lab 5 verification evidence
+
+The team collected the following deployment evidence:
+
+1. A successful `/health` response showing `status`, `model_version`, and the deployed Git SHA.
+2. A structured JSON request log from Cloud Run containing `request_id`, `latency_ms`, `model_version`, and `code_revision`.
+3. External verification results demonstrating both a successful deployment check (`PASSED`) and a deliberate model-version mismatch (`FAILED`).
+
+Together, these checks demonstrate that the deployed service is reachable by authorized users, exposes its deployment identity, produces traceable request logs, and detects incorrect deployment versions.
