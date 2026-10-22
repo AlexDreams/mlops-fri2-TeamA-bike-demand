@@ -26,5 +26,7 @@ COPY reports/week-01-team.md ./reports/week-01-team.md
 COPY .github/workflows/ci.yml ./.github/workflows/ci.yml
 COPY tests ./tests
 
+ARG BIKE_DEMAND_REVISION=unknown
+ENV BIKE_DEMAND_REVISION=${BIKE_DEMAND_REVISION}
 EXPOSE 8000
 CMD ["uv", "run", "--locked", "uvicorn", "bike_demand.api:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -265,3 +265,90 @@ uv run --locked python -c "from pathlib import Path; from bike_demand.preflight 
 ```
 
 Record the image ID, model hash, model version, test output and actual HTTP responses in the Week 2 team report. The milestone tag `m2` should be created only after the final merged revision and reports have been verified.
+
+
+## Deploy
+
+### Runtime configuration
+
+The service runs with Uvicorn on port 8000.
+
+Environment variables:
+- `BIKE_DEMAND_ARTIFACTS`: model artifact directory (default: `artifacts`).
+- `BIKE_DEMAND_REVISION`: Git revision of the deployed API code.
+
+### Build
+
+From the bike-demand directory, after committing the source:
+
+```powershell
+$REVISION = git rev-parse HEAD
+docker build --build-arg BIKE_DEMAND_REVISION=$REVISION -t bike-demand:lab5 .
+```
+
+### Run
+
+```powershell
+docker run --rm --name bike-demand-lab5 -p 127.0.0.1:8000:8000 bike-demand:lab5
+```
+
+### Readiness
+
+`GET /health` returns HTTP 200 only when the model has been loaded successfully.
+
+If the model is missing or invalid, `/health` returns HTTP 503.
+
+### Logs
+
+The service emits structured application logs for requests.
+Do not log secrets, raw prediction payloads or personal data.
+
+### Verification
+
+Run `scripts/verify_deployment.py` from the host against the running container.
+
+Compare the observed model version and code revision with the values recorded for the deployment.
+
+## Questions about deployment
+
+### Settings: What changes between laptop and container?
+
+The service can run locally or inside Docker. The BIKE_DEMAND_ARTIFACTS environment variable controls where the model artifacts are loaded from. If it is not set, the service uses the local artifacts/ directory. The container runs the API with Uvicorn on port 8000.
+
+### Model: Where does it come from at startup?
+
+At startup, the API loads the existing artifacts/model.joblib and artifacts/model-metadata.json files. It checks that the model's SHA-256 hash matches the metadata and that the feature list matches the expected features. The API does not train a new model.
+
+### Ready: When do you call the service ready?
+
+The service is ready when its startup process has loaded and verified the model successfully, and the /health endpoint returns HTTP 200 with "status": "ok" and the model version.
+
+### Broken: What does it say if the model is missing?
+
+If the model or metadata is missing, or the model checks fail, the API treats the model as unavailable. The /health and /predict endpoints return HTTP 503 with the detail "model unavailable".
+
+### Log line: What must one request tell an operator?
+
+A useful log line should tell the operator what happened, where it happened, and enough context to diagnose the issue. For a deployment request, include the endpoint or operation, the outcome or HTTP status, and a request ID to trace the request across logs. Never include secrets or sensitive request data.
+
+### Secrets: What must never appear in a log?
+
+Logs must never contain passwords, access tokens, API keys, credentials, or other sensitive personal information. Log only the information needed to diagnose and monitor the service.
+
+### Identity: Which ID shows which model is running?
+
+The model_version field identifies the model version returned by /health and /predict. The metadata also contains a model_run_id identifying the MLflow run associated with the model.
+
+### Expected: Who knows the expected model, and when?
+
+The deployment verification script knows the expected model because the operator provides it using --expected-model. This value is supplied when running the verification command, so the script can compare the deployed model against the model that was intended to be deployed.
+
+### Promise: What does "deployed" promise to others?
+
+A deployed service should expose a predictable HTTP API, validate prediction requests, return predictions from the verified saved model, and report whether the model is available. Deployment alone does not guarantee prediction accuracy or availability under every failure condition.
+
+### Failure: Break it once. What does it leave behind?
+
+A controlled failure test should document the failure, the HTTP response, the relevant logs, and the state of the service afterward. For example, if the model is unavailable at startup, the API should return HTTP 503 from /health and /predict. The exact remaining container, image, and log state must be confirmed from the actual test.
+
+
