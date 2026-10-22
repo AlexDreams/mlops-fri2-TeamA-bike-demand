@@ -1,4 +1,3 @@
-
 """Test the external deployment verification script."""
 
 import json

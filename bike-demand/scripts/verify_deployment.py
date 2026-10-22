@@ -1,4 +1,3 @@
-
 """Verify a running Bike Demand deployment over HTTP."""
 
 import argparse
@@ -53,10 +52,7 @@ def main() -> int:
 
     for name, expected, observed in checks:
         result = "OK" if expected == observed else "FAIL"
-        print(
-            f"{name}: expected={expected!r}, "
-            f"observed={observed!r} -> {result}"
-        )
+        print(f"{name}: expected={expected!r}, observed={observed!r} -> {result}")
         if expected != observed:
             failed = True
 
