@@ -1,4 +1,3 @@
-
 """Serve the trained baseline model. This module never trains."""
 
 import json
@@ -73,9 +72,7 @@ def create_app(artifacts: Path = ARTIFACTS) -> FastAPI:
         finally:
             loaded = getattr(app.state, "loaded", None)
             model_version = (
-                loaded["metadata"].get("model_version")
-                if loaded is not None
-                else None
+                loaded["metadata"].get("model_version") if loaded is not None else None
             )
 
             event = {
@@ -84,9 +81,7 @@ def create_app(artifacts: Path = ARTIFACTS) -> FastAPI:
                 "method": request.method,
                 "path": request.url.path,
                 "status_code": status_code,
-                "latency_ms": round(
-                    (time.perf_counter() - started) * 1000, 2
-                ),
+                "latency_ms": round((time.perf_counter() - started) * 1000, 2),
                 "model_version": model_version,
                 "code_revision": CODE_REVISION,
             }
