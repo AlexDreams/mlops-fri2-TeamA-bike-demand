@@ -1,0 +1,37 @@
+
+steps:
+  - id: "Build Docker image"
+    name: "gcr.io/cloud-builders/docker"
+    dir: "bike-demand"
+    args:
+      - "build"
+      - "--build-arg"
+      - "BIKE_DEMAND_REVISION=$COMMIT_SHA"
+      - "-t"
+      - "europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mlops-fri2-teama-bike-demand:$COMMIT_SHA"
+      - "-f"
+      - "Dockerfile"
+      - "."
+
+  - id: "Push Docker image"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mlops-fri2-teama-bike-demand:$COMMIT_SHA"
+
+  - id: "Deploy to Cloud Run"
+    name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
+    entrypoint: "gcloud"
+    args:
+      - "run"
+      - "deploy"
+      - "mlops-fri2-teama-bike-demand"
+      - "--image=europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mlops-fri2-teama-bike-demand:$COMMIT_SHA"
+      - "--region=europe-west1"
+      - "--project=$PROJECT_ID"
+      - "--quiet"
+
+images:
+  - "europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mlops-fri2-teama-bike-demand:$COMMIT_SHA"
+
+timeout: "1200s"
