@@ -1,18 +1,23 @@
 """Serve the trained baseline model. This module never trains."""
 
+
 import json
+import logging
 import math
 import os
+import time
+import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
 
 import joblib
 import pandas as pd
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 
 from bike_demand.api_schema import PredictionRequest
 from bike_demand.preflight import sha256
 from bike_demand.validate import FEATURES
+
 
 ARTIFACTS = Path(os.environ.get("BIKE_DEMAND_ARTIFACTS", "artifacts"))
 
