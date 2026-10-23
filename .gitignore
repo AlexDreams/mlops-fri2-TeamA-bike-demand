@@ -1,3 +1,5 @@
 __pycache__/
 *.py[cod]
 *$py.class
+bike-demand/reports/metrics-history.jsonl
+bike-demand/reports/metrics.json
