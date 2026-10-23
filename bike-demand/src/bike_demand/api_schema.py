@@ -11,7 +11,7 @@ class PredictionRequest(BaseModel):
     season: StrictInt = Field(ge=1, le=4)
     yr: StrictInt = Field(ge=0, le=1)
     mnth: StrictInt = Field(ge=1, le=12)
-    hr: StrictInt = Field(ge=0,le=23)
+    hr: StrictInt = Field(ge=0, le=23)
     holiday: StrictInt = Field(ge=0, le=1)
     weekday: StrictInt = Field(ge=0, le=6)
     workingday: StrictInt = Field(ge=0, le=1)
