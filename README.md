@@ -351,7 +351,7 @@ A deployed service should expose a predictable HTTP API, validate prediction req
 
 A controlled failure test should document the failure, the HTTP response, the relevant logs, and the state of the service afterward. For example, if the model is unavailable at startup, the API should return HTTP 503 from /health and /predict. The exact remaining container, image, and log state must be confirmed from the actual test.
 
-## Lab 5 — Cloud Run Deployment and Verification
+## Lab 5 - Cloud Run Deployment and Verification
 
 ### Deployment overview
 
@@ -521,3 +521,218 @@ The team collected the following deployment evidence:
 3. External verification results demonstrating both a successful deployment check (`PASSED`) and a deliberate model-version mismatch (`FAILED`).
 
 Together, these checks demonstrate that the deployed service is reachable by authorized users, exposes its deployment identity, produces traceable request logs, and detects incorrect deployment versions.
+
+## CI - Lab 6: Make the Pipeline Able to Fail
+
+### Overview
+
+Our CI workflow is defined in `.github/workflows/ci.yml` at the repository root. It runs on GitHub-hosted runners to check proposed changes before integration into `main`.
+
+The pipeline uses locked Python dependencies, preflight verification, Ruff checks, pytest, and a Docker build. We require the infrastructure and Docker checks to pass before merging a pull request.
+
+We demonstrated a genuine red-to-green sequence in [PR #36](https://github.com/AlexDreams/mlops-fri2-TeamA-bike-demand/pull/36). Removing the maximum allowed hour caused two tests to fail. Restoring the validation constraint made the checks pass again.
+
+### Reproduce CI checks locally
+
+From the repository root:
+
+```powershell
+cd bike-demand
+uv sync --locked
+uv run --locked pytest -q --strict-markers
+uv run --locked ruff check .
+uv run --locked ruff format --check .
+cd ..
+```
+
+The Docker build can be checked separately:
+
+```powershell
+docker build -t bike-demand:ci-check ./bike-demand
+```
+
+The GitHub Actions results, rather than local runs, are the authoritative evidence that a specific commit passed on the CI runner.
+
+### Part 1 - Pipeline checks
+
+#### 1. Coverage: What do our checks not cover yet?
+
+**Choice:** Run preflight, style checks, API/schema tests, regression tests, and a Docker build. These cover important reproducibility, interface, and packaging failures.
+
+**Rejected option:** Treat a successful test suite as proof that the entire production system is correct.
+
+**Why:** CI does not fully establish model quality on future data, production reliability, or the correctness of every possible request. Those require separate evaluation and operational checks.
+
+#### 2. Machine: What does a clean runner not have?
+
+**Choice:** Use a fresh GitHub-hosted Ubuntu runner with Python 3.12 and dependencies installed from `uv.lock`.
+
+**Rejected option:** Rely on packages, files, credentials, or MLflow runs available only on a developer's laptop.
+
+**Why:** A clean runner must reproduce the project from committed files and explicitly configured dependencies. It must not depend on undocumented local state or personal credentials.
+
+#### 3. Trigger: Which changes should start which checks?
+
+**Choice:** Run CI for pull requests targeting the integration branch and for pushes to `main`. Both code and test changes must be checked.
+
+**Rejected option:** Run tests only when someone manually requests them or only after deployment.
+
+**Why:** Every proposed integration should receive feedback before merging. A push to `main` should also confirm the integrated revision.
+
+#### 4. Order: Which check should fail first, and why?
+
+**Choice:** Check the environment and code quality before relying on the full test suite. The Docker build provides additional packaging evidence.
+
+**Rejected option:** Run only the most expensive checks without identifying simpler failures first.
+
+**Why:** Missing files, dependency problems, and formatting issues are generally easier to diagnose before investigating functional test failures. The actual workflow job order and dependencies remain defined by `.github/workflows/ci.yml`.
+
+#### 5. Evidence: What can CI claim about the model?
+
+**Choice:** CI can claim that a particular Git commit passed the checks executed by its runner, using the committed code and locked dependencies.
+
+**Rejected option:** Claim that CI reproduces every experiment recorded in a developer's local MLflow database or proves future model accuracy.
+
+**Why:** Local MLflow experiments and CI runner results are different evidence sources. CI cannot establish facts it did not measure.
+
+### Part 2 - Tests and failure demonstration
+
+#### 6. Defects: Which bug does each test catch?
+
+**Choice:** Maintain tests with identifiable failure purposes. Examples include:
+
+- `test_predict_invalid_request`: detects API requests that incorrectly accept invalid inputs.
+- `test_invalid_values`: detects missing or incorrect Pydantic validation constraints.
+- Model regression tests: detect changes in recorded prediction behavior beyond the selected tolerance.
+- Preflight and artifact tests: detect missing, inconsistent, or invalid project inputs and model artifacts.
+
+**Rejected option:** Keep tests without knowing which behavior they protect.
+
+**Why:** A useful test should fail when the behavior it checks is broken.
+
+#### 7. Failing: Can we make the tests fail?
+
+**Choice:** Demonstrate a real failure by removing the upper bound from the hour field:
+
+```python
+# Deliberately defective
+hr: StrictInt = Field(ge=0)
+
+# Correct
+hr: StrictInt = Field(ge=0, le=23)
+```
+
+The defective version accepts invalid hours such as 25 and 30.
+
+In PR #36, GitHub Actions reported:
+
+```text
+FAILED tests/test_api.py::test_predict_invalid_request[hr-25]
+FAILED tests/test_api_schema.py::test_invalid_values[hr-30]
+2 failed, 80 passed, 1 warning
+Error: Process completed with exit code 1.
+```
+
+**Rejected option:** Force a red status with an unrelated failure or disable assertions afterward.
+
+**Why:** The failures directly demonstrate that the existing tests detect the deliberately introduced validation defect.
+
+#### 8. Tolerance: Where does our numerical tolerance come from?
+
+**Choice:** Use a recorded reference prediction in the model regression test and compare new predictions against it using an explicit absolute tolerance. The current regression test uses an absolute tolerance of `1e-6`.
+
+**Rejected option:** Increase the tolerance until a failing test becomes green.
+
+**Why:** A tolerance must be justified by measured numerical variation, not convenience. The team must still document repeated measurements or a reproducibility comparison supporting `1e-6`. Until that evidence is recorded, this justification is incomplete.
+
+#### 9. Repair: Did we fix the cause or hide it?
+
+**Choice:** Restore `le=23` in the Pydantic field definition, then rerun the same CI checks on the same pull request.
+
+**Rejected option:** Skip the failing tests, weaken their assertions, or simply rerun the failed workflow without changing the code.
+
+**Why:** The cause was a missing domain constraint. Restoring the constraint repairs the behavior rather than concealing the failure.
+
+#### 10. Records: What will still be readable in three months?
+
+**Choice:** Preserve the failing log as text, the diagnosis, the defective and repair commit SHAs, and the passing-run evidence in the team repository or report.
+
+**Rejected option:** Keep only links to GitHub Actions logs.
+
+**Why:** Hosted CI logs can expire. A committed text record and the Git history provide more durable evidence.
+
+### Red-to-green evidence - PR #36
+
+**Pull request:** https://github.com/AlexDreams/mlops-fri2-TeamA-bike-demand/pull/36
+
+**Failing run:** https://github.com/AlexDreams/mlops-fri2-TeamA-bike-demand/actions/runs/39940905449/job/120371800256?pr=36
+
+**Passing run:** https://github.com/AlexDreams/mlops-fri2-TeamA-bike-demand/actions/runs/39942844497/job/120378238321
+
+**Commit history:**
+- `86f1a4e`: failing checks.
+- `9efd1a1`: failing checks.
+- `2f4d24f`: passing checks.
+
+**Diagnosis:** The hour field no longer enforced its maximum value of 23. The API returned HTTP 200 for an invalid hour of 25, and schema validation accepted an invalid hour of 30.
+
+**Repair:** Restore the upper bound `le=23`.
+
+**Outcome:** Both required PR checks passed after the correction, and PR #36 was merged.
+
+**Durable log record:** The failing pytest output must also be saved as a text file in the team repository or report; the links above are not sufficient by themselves.
+
+### Part 3 - Deployment to Cloud Run
+
+#### 11. Gate: Which branch and checks gate deployment?
+
+**Choice:** The intended Lab 6 deployment gate is a successful CI run for `main`, including the required infrastructure and Docker checks, before building and deploying the corresponding commit.
+
+**Rejected option:** Deploy every push regardless of test results.
+
+**Why:** A failed change should not automatically reach the running service.
+
+**Current limitation:** The existing Lab 5 Cloud Build trigger can deploy pushes to `main` independently of the GitHub Actions checks. Therefore, the full Lab 6 deployment gate has not yet been demonstrated. The team must establish the new gate and safely transition away from the independent trigger before claiming completion.
+
+#### 12. Identity: How does deployment authenticate without a stored key?
+
+**Choice:** Use GitHub Actions OpenID Connect with Google Cloud Workload Identity Federation to authenticate as a dedicated deployment service account, without committing or storing a long-lived JSON service-account key.
+
+**Rejected option:** Store a service-account JSON private key in the repository or workflow.
+
+**Why:** Federated, short-lived credentials reduce the risks associated with persistent secrets.
+
+**Current limitation:** Creation of the required Workload Identity Pool was denied because the available account lacks `iam.workloadIdentityPools.create`. Instructor or administrator assistance is required. Keyless GitHub Actions authentication has not yet been configured.
+
+#### 13. Proof: What shows that the new revision is live?
+
+**Choice:** Verify the deployed service through an authenticated `/health` request. Require HTTP 200, `status: ok`, the expected `model_version`, and a `code_revision` matching the deployed Git commit. Preserve the deployment run, revision identifier, and live response.
+
+**Rejected option:** Treat a successful Docker build or deployment command as sufficient proof that the expected code is serving requests.
+
+**Why:** A live verification checks the actual running service and the identity of its code and model.
+
+**Current evidence:** Lab 5 established authenticated health verification on the private Cloud Run service `mlops-fri2-teama-bike-demand` in `europe-west1`. A corresponding GitHub Actions deployment verification is still pending.
+
+#### 14. Undo: What happens if the live check fails?
+
+**Choice:** Preserve the previously healthy Cloud Run revision and plan to restore its traffic if the newly deployed revision fails the authenticated live verification.
+
+**Rejected option:** Leave a failed new revision serving traffic or silently ignore a failed health check.
+
+**Why:** Deployment success must include a recovery path, not merely an attempt to start a container.
+
+**Current limitation:** Automated rollback from GitHub Actions has not yet been implemented or demonstrated. This must be tested before the team claims the Lab 6 deployment requirement is complete.
+
+### Remaining Lab 6 work
+
+The team must still:
+
+- Commit the raw failing pytest log as durable evidence.
+- Measure and justify the numerical regression tolerance.
+- Obtain the Google Cloud IAM configuration needed for keyless authentication.
+- Implement and verify deployment gated by successful CI on `main`.
+- Demonstrate authenticated live verification and rollback behavior.
+- Complete the team Lab 6 report and individual Week 3 reports.
+
+Incomplete evidence must be reported as incomplete rather than represented as a successful test.
