@@ -33,5 +33,16 @@ jobs:
       - run: uv run --locked python -m bike_demand.preflight
       - run: uv run --locked ruff check .
       - run: uv run --locked ruff format --check .
-      - run: uv run --locked pytest -q -m infra
-      - run: uv run --locked pytest -q -m lab1
+      - name: Run all tests
+        run: uv run --locked pytest -q --strict-markers
+  docker:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Build Docker image
+        run: docker build -t bike-demand:ci ./bike-demand
