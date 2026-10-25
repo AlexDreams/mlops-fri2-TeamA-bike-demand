@@ -692,7 +692,15 @@ Error: Process completed with exit code 1.
 
 **Why:** A failed change should not automatically reach the running service.
 
-**Current limitation:** The existing Lab 5 Cloud Build trigger can deploy pushes to `main` independently of the GitHub Actions checks. Therefore, the full Lab 6 deployment gate has not yet been demonstrated. The team must establish the new gate and safely transition away from the independent trigger before claiming completion.
+**Current state:** `cloudbuild.yaml` now runs the same checks as CI (locked `uv sync`, preflight, Ruff, full pytest) as its first step. Cloud Build stops at the first failing step, so a red check means no image is built, pushed or deployed.
+
+**Current limitation:** The Cloud Build trigger still does not wait for the GitHub Actions result; the two pipelines run the same checks independently. Reproduce the Cloud Build check step locally (clean container, no `.git`):
+
+```powershell
+docker run --rm -v "${PWD}\bike-demand:/w" -w /w -e UV_PYTHON_DOWNLOADS=never -e UV_PROJECT_ENVIRONMENT=/opt/venv --entrypoint bash python:3.12-slim -ceu "apt-get update -qq && apt-get install -y -qq git && pip install -q uv==0.12.23 && uv sync --locked && uv run --locked pytest -q --strict-markers"
+```
+
+`UV_PROJECT_ENVIRONMENT` keeps the container's virtual environment out of your local `.venv`.
 
 #### 12. Identity: How does deployment authenticate without a stored key?
 
@@ -702,7 +710,9 @@ Error: Process completed with exit code 1.
 
 **Why:** Federated, short-lived credentials reduce the risks associated with persistent secrets.
 
-**Current limitation:** Creation of the required Workload Identity Pool was denied because the available account lacks `iam.workloadIdentityPools.create`. Instructor or administrator assistance is required. Keyless GitHub Actions authentication has not yet been configured.
+**Current limitation:** Creation of the required Workload Identity Pool was denied because the available account lacks `iam.workloadIdentityPools.create`. Keyless GitHub Actions authentication has not been configured.
+
+**What is used instead:** the deployment runs in Cloud Build, connected to GitHub through the Cloud Build GitHub App, and executes as the project's Cloud Build service account. No service-account JSON key exists in the repository, in GitHub secrets or on a laptop. This is keyless, but it is not the GitHub OIDC + Workload Identity Federation path described above.
 
 #### 13. Proof: What shows that the new revision is live?
 
@@ -728,11 +738,11 @@ Error: Process completed with exit code 1.
 
 The team must still:
 
-- Commit the raw failing pytest log as durable evidence.
-- Measure and justify the numerical regression tolerance.
-- Obtain the Google Cloud IAM configuration needed for keyless authentication.
-- Implement and verify deployment gated by successful CI on `main`.
-- Demonstrate authenticated live verification and rollback behavior.
-- Complete the team Lab 6 report and individual Week 3 reports.
+- Measure and justify the numerical regression tolerance across environments.
+- Protect `main` so that the `infrastructure` and `docker` checks are required before merging.
+- Observe the first real Cloud Build run with the blocking checks step.
+- Add automated authenticated live verification after deploy (`verify_deployment.py` already accepts an identity token via `BIKE_DEMAND_ID_TOKEN`) and keep the previous revision serving if it fails.
+
+Done since the first version of this list: the raw failing pytest log is committed in `bike-demand/reports/evidence/ci-red-pr36-infrastructure.txt`, and the team Lab 6 report is in `bike-demand/reports/week-03-team.md`.
 
 Incomplete evidence must be reported as incomplete rather than represented as a successful test.

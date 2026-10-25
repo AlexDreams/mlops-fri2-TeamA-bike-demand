@@ -1,10 +1,16 @@
-"""Verify a running Bike Demand deployment over HTTP."""
+"""Verify a running Bike Demand deployment over HTTP.
+
+For a private Cloud Run service, put an identity token in the
+BIKE_DEMAND_ID_TOKEN environment variable; it is sent as a Bearer token and
+never printed.
+"""
 
 import argparse
 import json
+import os
 import sys
 from urllib.error import HTTPError, URLError
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 
 
 def main() -> int:
@@ -29,9 +35,11 @@ def main() -> int:
     args = parser.parse_args()
 
     health_url = args.url.rstrip("/") + "/health"
+    token = os.environ.get("BIKE_DEMAND_ID_TOKEN")
+    headers = {"Authorization": f"Bearer {token}"} if token else {}
 
     try:
-        with urlopen(health_url, timeout=10) as response:
+        with urlopen(Request(health_url, headers=headers), timeout=10) as response:
             status_code = response.status
             health = json.load(response)
     except HTTPError as exc:

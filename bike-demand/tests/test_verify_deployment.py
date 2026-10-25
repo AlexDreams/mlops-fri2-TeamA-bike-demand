@@ -1,6 +1,7 @@
 """Test the external deployment verification script."""
 
 import json
+import os
 import subprocess
 import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -11,7 +12,10 @@ SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "verify_deployment.py
 
 
 class HealthHandler(BaseHTTPRequestHandler):
+    authorization = None
+
     def do_GET(self):
+        HealthHandler.authorization = self.headers.get("Authorization")
         if self.path != "/health":
             self.send_error(404)
             return
@@ -34,7 +38,11 @@ class HealthHandler(BaseHTTPRequestHandler):
         pass
 
 
-def run_verifier(expected_model, expected_revision):
+def run_verifier(expected_model, expected_revision, token=None):
+    HealthHandler.authorization = None
+    env = {k: v for k, v in os.environ.items() if k != "BIKE_DEMAND_ID_TOKEN"}
+    if token is not None:
+        env["BIKE_DEMAND_ID_TOKEN"] = token
     server = ThreadingHTTPServer(("127.0.0.1", 0), HealthHandler)
     thread = Thread(target=server.serve_forever, daemon=True)
     thread.start()
@@ -55,6 +63,7 @@ def run_verifier(expected_model, expected_revision):
             text=True,
             timeout=15,
             check=False,
+            env=env,
         )
     finally:
         server.shutdown()
@@ -80,3 +89,18 @@ def test_wrong_revision_fails():
     assert result.returncode == 1
     assert "code_revision" in result.stdout
     assert "FAIL" in result.stdout
+
+
+def test_identity_token_is_sent_and_not_printed():
+    # Catches: the private Cloud Run service rejecting the check (no token sent)
+    # or the token leaking into logs.
+    result = run_verifier("baseline-f01a22df4c39", "abc123", token="secret-token")
+    assert result.returncode == 0
+    assert HealthHandler.authorization == "Bearer secret-token"
+    assert "secret-token" not in result.stdout + result.stderr
+
+
+def test_no_token_sends_no_authorization_header():
+    result = run_verifier("baseline-f01a22df4c39", "abc123")
+    assert result.returncode == 0
+    assert HealthHandler.authorization is None
