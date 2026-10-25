@@ -88,7 +88,7 @@ Each member worked on their personal branch (`alexandre-dev`, `thaddee-dev`, `al
 
 **Lab 6 — documented contributions**
 
-- **Alexandre:** verified CI results and diagnosed the hour-validation failure; checked the local test suite and repeated numerical prediction; documented the 14 Lab 6 CI questions in the root README; collected the failing CI log and deployment evidence; investigated the Google Cloud identity/permissions blocker.
+- **Alexandre:** reviewed PR #36 without knowing the defect in advance, diagnosed the hour-validation failure from the CI log and reported it to Thaddée; checked the local test suite and repeated numerical prediction; documented the 14 Lab 6 CI questions in the root README; collected the failing CI log and deployment evidence; investigated the Google Cloud identity/permissions blocker.
 - **Thaddée:** implemented or integrated CI and regression testing, introduced and repaired the controlled schema defect within PR #36, and reviewed/merged Alexandre's README documentation PR.
 - **Alban:** no Lab 6 technical contribution is claimed in the available evidence.
 
@@ -136,6 +136,14 @@ The planned Lab 5 review rotation was completed with the following GitHub eviden
   https://github.com/AlexDreams/mlops-fri2-TeamA-bike-demand/pull/30#issuecomment-6337631919
 
 PRs #28 and #30 have review comments but no formal GitHub APPROVED review records. PR #36 (Lab 6) was merged by Alexandre; no formal review or discussion comment is recorded in the checked GitHub fields.
+
+### Lab 6 "break it on purpose" (PR #36)
+
+- **Defect:** Thaddée chose and introduced it: he removed `le=23` from `hr`.
+- **Review:** Alexandre reviewed the PR without being told what the defect was. He identified it from the red `infrastructure` check and its log (`assert 200 == 422` for `hr=25`; `DID NOT RAISE` for `hr=30`) and reported it.
+- **Repair:** Thaddée then repaired it in commit `2f4d24f` on the same PR; the checks turned green and Alexandre merged.
+- **Outcome:** the existing tests caught the defect, so no missing test had to be added.
+- **Limitation:** the slide asks the reviewer to pick the bug without the test author knowing. Here the roles were reversed: the defect was chosen by the author of the tests (Thaddée, PR #34) and diagnosed by the reviewer. This shows that the CI catches this defect and that a reviewer can find the cause from the log. It is a weaker check of what the tests miss than a defect chosen by someone who did not write the tests.
 
 ## Blockers / missing evidence
 
