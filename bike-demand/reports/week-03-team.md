@@ -1,11 +1,11 @@
-﻿# Week 3, Labs 5â€“6: deployment, structured logs, model-version checks, GitHub Actions
+# Week 3, Labs 5–6: deployment, structured logs, model-version checks, GitHub Actions
 
-**Team report â€” Team A / Bike Demand**  
-**Status:** Labs 5â€“6 evidence assembled on 23 October 2026. Lab 5 deployment and Lab 6 CI tests demonstrated; **CI-gated CD, automated rollback and cross-environment tolerance justification remain incomplete**.
+**Team report — Team A / Bike Demand**  
+**Status:** Labs 5–6 evidence assembled on 23 October 2026. Lab 5 deployment and Lab 6 CI tests demonstrated; **CI-gated CD, automated rollback and cross-environment tolerance justification remain incomplete**.
 
 ## Student / team
 
-Team A, ECE MLOps. **Lab 5:** Alexandre, ThaddÃ©e and Alban contributed to the team work. **Lab 6:** the documented CI work was carried out by Alexandre and ThaddÃ©e; Alban was absent for Lab 6. Contributions below distinguish confirmed assignments and observed evidence.
+Team A, ECE MLOps. **Lab 5:** Alexandre, Thaddée and Alban contributed to the team work. **Lab 6:** the documented CI work was carried out by Alexandre and Thaddée; Alban was absent for Lab 6. Contributions below distinguish confirmed assignments and observed evidence.
 
 ## Links to code and pull requests
 
@@ -17,15 +17,15 @@ Team A, ECE MLOps. **Lab 5:** Alexandre, ThaddÃ©e and Alban contributed to the
 - Red-to-green defect and repair: [PR #36](https://github.com/AlexDreams/mlops-fri2-TeamA-bike-demand/pull/36).
 - Failing CI job: [run 39940905449](https://github.com/AlexDreams/mlops-fri2-TeamA-bike-demand/actions/runs/39940905449/job/120371800256?pr=36).
 - Passing CI job: [run 39942844497](https://github.com/AlexDreams/mlops-fri2-TeamA-bike-demand/actions/runs/39942844497/job/120378238321).
-- README includes Lab 5 deployment instructions and Lab 6 CI decisions (14 questions); the README documentation PR was reviewed and merged by ThaddÃ©e (PR number not recorded here).
+- README includes Lab 5 deployment instructions and Lab 6 CI decisions (14 questions); the README documentation PR ([PR #37](https://github.com/AlexDreams/mlops-fri2-TeamA-bike-demand/pull/37)) was reviewed and merged by Thaddée.
 
 ## Test and execution results (commands, revision, observed output)
 
-### Lab 5 â€” Docker, Cloud Run, health and logs
+### Lab 5 — Docker, Cloud Run, health and logs
 
 Cloud project: `mlops-demo-512323`; Cloud Run service: `mlops-fri2-teama-bike-demand`; region: `europe-west1`. The service requires authentication. `cloudbuild.yaml` builds a Docker image with `BIKE_DEMAND_REVISION=$COMMIT_SHA`, pushes it to Artifact Registry, and deploys it to Cloud Run. This is the **existing independent Cloud Build trigger**, not a GitHub-Actions-gated deployment.
 
-An observed successful Cloud Build had ID `41f8aa89-5ce9-4f5f-82ac-6fe57f6b7f9`, sourced from `main` at commit `224b177c55ad19474804899da0e59b7f59864bc2`. All three steps â€” build, push, deploy â€” succeeded (see screenshot).
+An observed successful Cloud Build had ID `41f8aa89-5ce9-4f5f-82ac-6fe57f6b7f9`, sourced from `main` at commit `224b177c55ad19474804899da0e59b7f59864bc2`. All three steps — build, push, deploy — succeeded (see screenshot).
 
 Authenticated `/health` returned HTTP 200 with `status: ok`, `model_version: baseline-f01a22df4c39`, and `code_revision: 224b177c55ad19474804899da0e59b7f59864bc2`. The same identity was confirmed through the local authenticated Cloud Run proxy (`gcloud.cmd run services proxy ... --port 8080`) and the verifier:
 
@@ -37,7 +37,7 @@ Observed: `Deployment verification PASSED`. Supplying an intentionally incorrect
 
 The application emits structured request logs including `event`, `method`, `path`, `status_code`, `latency_ms`, `request_id`, `model_version` and `code_revision`. An observed `/health` request had HTTP 200 and latency `4.89 ms`. No secrets or raw prediction payloads should be logged. A screenshot of this structured log was provided, but the four embedded screenshots below prioritize deployment, verification, and CI failure evidence.
 
-### Lab 6 â€” CI and red-to-green proof
+### Lab 6 — CI and red-to-green proof
 
 GitHub Actions runs on pull requests to `main`, pushes to `main`, and manual dispatch. The `infrastructure` job runs on `ubuntu-24.04` with Python 3.12, `uv sync --locked`, preflight, Ruff checks and `uv run --locked pytest -q --strict-markers`. The `docker` job builds `./bike-demand`. `pyproject.toml` registers the `infra`, `lab1` and `exercise` pytest markers and enables strict marker/config checks.
 
@@ -58,38 +58,38 @@ A prior full local test suite run reported **82 passed, 1 warning** using `uv ru
 
 ## Screenshots
 
-The template requests 2â€“4 screenshots. These four are selected from the supplied captures; all paths are relative to this report.
+The template requests 2–4 screenshots. These four are selected from the supplied captures; all paths are relative to this report.
 
 ![Cloud Build successful build, push and deploy](images/cloud-build-success.png)
 
-*Figure 1 â€” Lab 5: successful Cloud Build run `41f8aa89-5ce9-4f5f-82ac-6fe57f6b7f9`, deploying `main` commit `224b177c...`.*
+*Figure 1 — Lab 5: successful Cloud Build run `41f8aa89-5ce9-4f5f-82ac-6fe57f6b7f9`, deploying `main` commit `224b177c...`.*
 
 ![Deployment verification passed and deliberately failed](images/cloud-run-verification.png)
 
-*Figure 2 â€” Lab 5: verifier reports `PASSED` for the expected model and revision, and `FAILED` for an intentionally incorrect model version; deployed code revision `224b177c...`.*
+*Figure 2 — Lab 5: verifier reports `PASSED` for the expected model and revision, and `FAILED` for an intentionally incorrect model version; deployed code revision `224b177c...`.*
 
 ![CI failure and successful Docker check](images/ci-red-pr36.png)
 
-*Figure 3 â€” Lab 6: PR #36 failing `infrastructure` check and successful `docker` check, before the repair; failing run `39940905449`.*
+*Figure 3 — Lab 6: PR #36 failing `infrastructure` check and successful `docker` check, before the repair; failing run `39940905449`.*
 
 ![Recorded model regression test passing](images/regression-test-passed.png)
 
-*Figure 4 â€” Lab 6: local recorded-prediction regression test passing (`1 passed`), using the model version recorded in the test. This is local evidence, not the CI run.*
+*Figure 4 — Lab 6: local recorded-prediction regression test passing (`1 passed`), using the model version recorded in the test. This is local evidence, not the CI run.*
 
 ## My contribution
 
-**Lab 5 â€” assigned responsibilities and delivered work**
+**Lab 5 — assigned responsibilities and delivered work**
 
 - **Alexandre:** created `bike-demand/scripts/verify_deployment.py` to query the running container over HTTP, check readiness, compare `model_version` and the deployed Git `code_revision` against expected values, and exit with failure on a mismatch. The provided terminal evidence shows both `Deployment verification PASSED` and a deliberate `FAILED` for a wrong model version. Also collected the authenticated Cloud Run checks and deployment evidence.
-- **ThaddÃ©e:** handled structured request logging in `bike-demand/src/bike_demand/api.py` (HTTP status, latency, request ID, model version) and made `GET /health` expose `code_revision` derived from `BIKE_DEMAND_REVISION`. The supplied Cloud Run log screenshot shows the structured fields and revision.
+- **Thaddée:** handled structured request logging in `bike-demand/src/bike_demand/api.py` (HTTP status, latency, request ID, model version) and made `GET /health` expose `code_revision` derived from `BIKE_DEMAND_REVISION`. The supplied Cloud Run log screenshot shows the structured fields and revision.
 - **Alban:** handled the Dockerfile and runtime configuration for Lab 5, runtime settings, and the `Deploy` section of the root README. His task was to make `BIKE_DEMAND_REVISION` available to the container and document the Docker build/run command. These responsibilities are reflected in the repository's Docker and deployment documentation. His Lab 5 contribution was merged in PR #30.
 
-Each member worked on their personal branch (`alexandre-dev`, `thaddee-dev`, `alban-dev`) with PRs targeting `main` as the agreed workflow. **The planned Lab 5 review assignments** were Alban reviewing Alexandre's PR, ThaddÃ©e reviewing Alban's PR, and Alexandre reviewing ThaddÃ©e's PR; actual completed approvals are not asserted without GitHub review records.
+Each member worked on their personal branch (`alexandre-dev`, `thaddee-dev`, `alban-dev`) with PRs targeting `main` as the agreed workflow. **The planned Lab 5 review assignments** were Alban reviewing Alexandre's PR, Thaddée reviewing Alban's PR, and Alexandre reviewing Thaddée's PR; actual completed approvals are not asserted without GitHub review records.
 
-**Lab 6 â€” documented contributions**
+**Lab 6 — documented contributions**
 
 - **Alexandre:** verified CI results and diagnosed the hour-validation failure; checked the local test suite and repeated numerical prediction; documented the 14 Lab 6 CI questions in the root README; collected the failing CI log and deployment evidence; investigated the Google Cloud identity/permissions blocker.
-- **ThaddÃ©e:** implemented or integrated CI and regression testing, introduced and repaired the controlled schema defect within PR #36, and reviewed/merged Alexandre's README documentation PR.
+- **Thaddée:** implemented or integrated CI and regression testing, introduced and repaired the controlled schema defect within PR #36, and reviewed/merged Alexandre's README documentation PR.
 - **Alban:** no Lab 6 technical contribution is claimed in the available evidence.
 
 
@@ -113,7 +113,7 @@ Repository: https://github.com/AlexDreams/mlops-fri2-TeamA-bike-demand
 
 ## Decisions and rationale
 
-**Lab 5:** Alexandreâ€™s HTTP verification script, ThaddÃ©eâ€™s structured logging and revision-aware `/health`, and Albanâ€™s Docker/runtime/README work form the three complementary implementation responsibilities. Reuse the saved model rather than retraining at API startup; validate model metadata and hashes before readiness; keep Cloud Run private; inject the Git SHA into the Docker build; verify both `model_version` and `code_revision`; use structured logs without secrets. We rejected anonymous access, silent model replacement, and a successful build as sufficient proof of a healthy live deployment.
+**Lab 5:** Alexandre’s HTTP verification script, Thaddée’s structured logging and revision-aware `/health`, and Alban’s Docker/runtime/README work form the three complementary implementation responsibilities. Reuse the saved model rather than retraining at API startup; validate model metadata and hashes before readiness; keep Cloud Run private; inject the Git SHA into the Docker build; verify both `model_version` and `code_revision`; use structured logs without secrets. We rejected anonymous access, silent model replacement, and a successful build as sufficient proof of a healthy live deployment.
 
 **Lab 6:** Use clean GitHub-hosted runners and locked dependencies; run preflight, Ruff, full pytest and Docker checks on PRs and `main`; require tests that genuinely fail on a known defect; repair the implementation rather than muting tests; retain raw logs and exact run links. We rejected laptop-only validation, disabling assertions, regenerating the lockfile to force green, and presenting local MLflow runs as CI evidence. The detailed 14 choice/rejected-option/rationale answers are in the root README.
 
@@ -121,7 +121,7 @@ Repository: https://github.com/AlexDreams/mlops-fri2-TeamA-bike-demand
 
 ## Review and response
 
-PR #36 preserved the defective commits, failed checks, repair commit, and subsequent green checks on the same PR. ThaddÃ©e merged Alexandre's README documentation PR. A formal approving review for PR #36 has not been independently established by the provided evidence; no such approval is claimed. Review comments and exact README PR number should be added if available. The exact Lab 5 PRs/commits and completed review approvals for Alexandre, ThaddÃ©e, and Alban should be linked if available; the review rotation described above is the agreed plan, not proof of completed approvals.
+PR #36 preserved the defective commits, failed checks, repair commit, and subsequent green checks on the same PR. Thaddée merged Alexandre's README documentation PR. A formal approving review for PR #36 has not been independently established by the provided evidence; no such approval is claimed. Review comments and exact README PR number should be added if available. The exact Lab 5 PRs/commits and completed review approvals for Alexandre, Thaddée, and Alban should be linked if available; the review rotation described above is the agreed plan, not proof of completed approvals.
 
 
 ### Verified Lab 5 peer reviews
@@ -140,10 +140,10 @@ PRs #28 and #30 have review comments but no formal GitHub APPROVED review record
 ## Blockers / missing evidence
 
 1. **Keyless deployment authentication:** `gcloud.cmd iam workload-identity-pools list --location=global --project=mlops-demo-512323` returned `Listed 0 items.` Attempted pool creation returned `PERMISSION_DENIED: iam.workloadIdentityPools.create`. The project administrator must configure an OIDC provider, an appropriately scoped deploy identity, and the required service-account bindings. No JSON service-account key should be created as a workaround.
-2. **CI-to-CD gate:** the existing Cloud Build trigger deploys `main` independently of GitHub Actions; therefore a failing GitHub CI run does not yet reliably prevent deployment. No CI-gated Cloud Run deployment is claimed.
-3. **Post-deploy rollback:** authenticated health verification exists, but automated CI-triggered rollback to a previous Cloud Run revision has not been implemented or demonstrated.
+2. **CI-to-CD gate:** the Cloud Build trigger still runs independently of GitHub Actions. As a partial mitigation (25 October 2026), `cloudbuild.yaml` now starts with a "Run blocking checks" step (locked `uv sync`, preflight, Ruff, full pytest) before the Docker build, so a failing check stops the build before any image is pushed or deployed. Before merging, this step was reproduced locally in a clean `python:3.12-slim` container with only Git-tracked files and no `.git`: the first attempt failed (`FileNotFoundError`, because `tracking.py` calls the `git` binary, which the slim image lacks); after installing `git` in the step, preflight, Ruff and **84 passed** (exit 0). This is a local simulation; the first real Cloud Build run of this step happens on the next `main` deploy. The gate uses Cloud Build's checks, not the GitHub Actions result; no GitHub-Actions-gated deployment is claimed.
+3. **Post-deploy rollback:** authenticated health verification exists, but automated CI-triggered rollback to a previous Cloud Run revision has not been implemented or demonstrated. Preparation: `verify_deployment.py` now sends an identity token from `BIKE_DEMAND_ID_TOKEN` as a Bearer header (never printed), covered by two new tests; the new token test was shown to fail when the header is removed. The Cloud Build service account holds `roles/run.admin`, so a no-traffic deploy → verify → traffic switch is feasible without extra IAM, but it is not built yet.
 4. **Numerical tolerance:** local 20-run variation was zero, but cross-environment measurements supporting `abs=1e-6` remain missing.
-5. **Additional audit items:** exact README PR link, Albanâ€™s Lab 5 commit/PR attribution, any formal review approvals, final milestone tag `m3`, and individual Week 3 reports should be checked separately. This document is the **team report**, not a substitute for individual submissions.
+5. **Additional audit items:** exact README PR link, Alban’s Lab 5 commit/PR attribution, any formal review approvals, final milestone tag `m3`, and individual Week 3 reports should be checked separately. This document is the **team report**, not a substitute for individual submissions.
 
 ## Assistance and recovery acknowledgement
 

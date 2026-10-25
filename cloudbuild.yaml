@@ -1,5 +1,28 @@
 
 steps:
+  # Same checks as .github/workflows/ci.yml. Cloud Build stops at the first
+  # failing step, so a red check means no image is built, pushed or deployed.
+  - id: "Run blocking checks"
+    name: "python:3.12-slim"
+    dir: "bike-demand"
+    entrypoint: "bash"
+    env:
+      - "UV_PYTHON_DOWNLOADS=never"
+      - "DEBIAN_FRONTEND=noninteractive"
+    args:
+      - "-ceu"
+      - |
+        # tracking.py calls the git binary; the GitHub runner and the
+        # Dockerfile both have it, python:3.12-slim does not.
+        apt-get update -qq
+        apt-get install -y -qq --no-install-recommends git
+        pip install --no-cache-dir uv==0.12.23
+        uv sync --locked
+        uv run --locked python -m bike_demand.preflight
+        uv run --locked ruff check .
+        uv run --locked ruff format --check .
+        uv run --locked pytest -q --strict-markers
+
   - id: "Build Docker image"
     name: "gcr.io/cloud-builders/docker"
     dir: "bike-demand"
