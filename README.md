@@ -746,3 +746,102 @@ The team must still:
 Done since the first version of this list: the raw failing pytest log is committed in `bike-demand/reports/evidence/ci-red-pr36-infrastructure.txt`, and the team Lab 6 report is in `bike-demand/reports/week-03-team.md`.
 
 Incomplete evidence must be reported as incomplete rather than represented as a successful test.
+
+
+
+
+## Pipeline and gate (Lab 7)
+
+### Entry point
+
+From `bike-demand/`, on a clean checkout of `main`:
+
+```powershell
+uv sync --locked
+uv run --locked python -m bike_demand.promote fetch
+uv run --locked python -m bike_demand.pipeline --candidate configs/candidates/<name>.yaml
+```
+
+- `promote fetch` downloads the accepted bundle named in `bike-demand/registry/accepted.json` and checks its SHA-256 digests.
+- `pipeline` trains one declared candidate, evaluates it against the train-mean baseline and the accepted model, and writes a decision record.
+- **Exit codes:** `0` eligible, `1` rejected, `2` blocked, `3` failed before a decision.
+- The pipeline never changes the accepted model or the served service.
+
+### Where things are
+
+| What | Location |
+|---|---|
+| Gate policy (committed before any candidate was evaluated) | [`bike-demand/configs/gate-policy.yaml`](bike-demand/configs/gate-policy.yaml) |
+| Declared candidates (budget: 3, all kept) | [`bike-demand/configs/candidates/`](bike-demand/configs/candidates/) |
+| Decision records | [`bike-demand/decisions/`](bike-demand/decisions/) |
+| Accepted-model pointer | [`bike-demand/registry/accepted.json`](bike-demand/registry/accepted.json) |
+| Accepted bundles (not in Git) | `gs://mlops-fri2-teama-bike-demand-models/bundles/<model_version>/` |
+| Raw evidence | [`bike-demand/reports/evidence/`](bike-demand/reports/evidence/) |
+
+Model binaries, `runs/`, `bundles/` and the MLflow `tracking/` database are never committed.
+
+### Policy
+
+All rules must pass for a candidate to be eligible. Missing or invalid evidence blocks the decision; it never counts as a pass.
+
+| Group | Rule | Threshold |
+|---|---|---|
+| Quality | Beats the train-mean baseline | candidate MAE ≤ 0.6 × naive MAE |
+| Quality | Beats the accepted model | candidate MAE ≤ accepted MAE − 2.0 bikes/hour |
+| Quality | No regression at peak hours (7–9, 16–19) | candidate peak MAE ≤ accepted peak MAE + 5.0 |
+| Operation | Bundle size | ≤ 100 MB |
+| Operation | Single-row predict latency, p95 (local, warm, 200 calls) | ≤ 50 ms |
+| Integrity | Data snapshot digest, exact candidate and accepted bytes, 4,358 validation rows, finite predictions, clean checkout | all required |
+
+**Why these thresholds:**
+
+- **0.6 × naive:** a model that only halves the error of predicting the 2011 mean adds little value for hourly planning.
+- **5.0 at peak hours:** peak hours are when bike availability matters most, so the average must not hide a regression there.
+- **100 MB and 50 ms:** the service runs on Cloud Run with 512 MiB of memory and answers one row per request.
+- **Changes:** any change to this policy after a candidate has been evaluated needs a reviewed PR that explains why.
+
+### Comparison
+
+**reference: which accepted version is frozen?**
+
+- **Choice:** the incumbent is the version named in `registry/accepted.json` (`baseline-f01a22df4c39`, model sha256 `fd98ceaf…`), fetched and checked by digest before it is loaded.
+- **Rejected:** comparing with whatever file happens to be in `artifacts/`.
+- **Why:** a name plus a digest identifies the exact bytes being compared.
+
+**observations: same rows and labels for both?**
+
+- **Choice:** the gate predicts with the baseline, the accepted model and the candidate on the same 4,358 validation rows (2012-01-01 to 2012-06-30), in the same process.
+- **Rejected:** comparing a fresh candidate score with a score recorded earlier.
+- **Why:** identical rows and labels make the comparison paired and fair.
+- **Held test:** the Jul–Dec 2012 window is never used.
+
+**metric: what does the score mean, in what unit?**
+
+- **Choice:** mean absolute error in bikes per hour (lower is better), plus the same metric on peak hours.
+- **Rejected:** RMSE as the primary metric.
+- **Why:** MAE reads directly as "how many bikes per hour we are wrong by", and the peak slice catches a regression the overall average could hide.
+
+**margin: what size of change matters, and why?**
+
+- **Choice:** 2.0 bikes/hour.
+- **Measurement:** training the accepted settings with 8 different seeds moved validation MAE by at most <SPREAD> bikes/hour (standard deviation <STDEV>; [`lab7-seed-variation.json`](bike-demand/reports/evidence/lab7-seed-variation.json)), so 2.0 is more than 3 times that spread.
+- **Rejected:** accepting any improvement, however small.
+- **Why:** a gain smaller than seed noise is not a real improvement.
+
+**provenance: what makes an old score reusable?**
+
+- **Choice:** we never reuse a score; both models are re-evaluated on every run.
+- **Rejected:** reusing the Lab 4 validation MAE.
+- **Why:** re-evaluation is cheap. An old score would only be reusable with the same data digest, rows, features and model bytes.
+
+### Pipeline boundary (Thaddée)
+
+<!-- training boundary, overwrite risk, settings guard, stage, entry point, failure, partial, identity -->
+
+### Failure and decisions (Alban)
+
+<!-- three claims, invalid, missing, reject, blocked, status -->
+
+### Accepted state and recovery (Alexandre)
+
+<!-- separate, identity, switch, concurrent, retain, how to recover without retraining -->

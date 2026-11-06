@@ -1,0 +1,33 @@
+# Lab 7 gate policy. Committed BEFORE any candidate is evaluated; any change
+# after that needs a reviewed PR that explains why (see README "Pipeline and gate").
+policy_version: 1
+
+# Lower is better. Unit: bikes per hour (cnt), on the validation window
+# 2012-01-01..2012-06-30 (4,358 rows). The held test window is never used.
+metric: validation_mae
+
+quality:
+  # Candidate MAE must be at most this fraction of the train-mean baseline MAE.
+  max_ratio_to_naive: 0.6
+  # Candidate MAE must beat the accepted model by at least this many bikes/hour.
+  # Must be larger than the seed-to-seed variation measured for the accepted
+  # settings (README "margin").
+  min_improvement_vs_incumbent: 2.0
+  # Peak hours slice: the candidate may not be worse than the accepted model by
+  # more than this many bikes/hour on these hours.
+  peak_hours: [7, 8, 9, 16, 17, 18, 19]
+  max_peak_regression: 5.0
+
+operation:
+  # Cloud Run service: 512 MiB memory; bundle and single-row latency must fit.
+  max_bundle_mb: 100
+  max_p95_predict_ms: 50
+
+integrity:
+  expected_validation_rows: 4358
+  # Official decisions must come from a clean checkout of a known commit.
+  require_clean_checkout: true
+
+budget:
+  # Declared candidates, all retained: configs/candidates/*.yaml
+  max_candidates: 3
