@@ -1,0 +1,20 @@
+# Hypothesis: a smaller, faster forest underfits hourly peaks; expected rejection.
+data: data/raw/hour.csv
+features:
+  - season
+  - yr
+  - mnth
+  - hr
+  - holiday
+  - weekday
+  - workingday
+  - weathersit
+  - temp
+  - atemp
+  - hum
+  - windspeed
+model:
+  n_estimators: 20
+  max_depth: 6
+  random_state: 42
+  n_jobs: 1
