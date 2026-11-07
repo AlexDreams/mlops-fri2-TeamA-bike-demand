@@ -1,0 +1,33 @@
+﻿----------------------------- REMOTE BUILD OUTPUT ------------------------------
+starting build "d0ceb59f-0bb3-4e59-a486-f482a3bb7768" using release legacy
+FETCHSOURCE
+From https://github.com/AlexDreams/mlops-fri2-TeamA-bike-demand
+ * branch            df27c97baf10ea744995761cc15ace8107754595 -> FETCH_HEAD
+HEAD is now at df27c97 Merge pull request #44 from AlexDreams/alexandre-dev
+GitCommit:
+df27c97baf10ea744995761cc15ace8107754595
+BUILD
+Starting Step #0 - "Fetch accepted bundle"
+Step #0 - "Fetch accepted bundle": Pulling image: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+Step #0 - "Fetch accepted bundle": slim: Pulling from google.com/cloudsdktool/cloud-sdk
+Step #0 - "Fetch accepted bundle": 6fc242d221a6: Already exists
+Step #0 - "Fetch accepted bundle": db4ac64018ac: Pulling fs layer
+Step #0 - "Fetch accepted bundle": e22a76a4f47c: Pulling fs layer
+Step #0 - "Fetch accepted bundle": 019b58d1ed69: Pulling fs layer
+Step #0 - "Fetch accepted bundle": 019b58d1ed69: Verifying Checksum
+Step #0 - "Fetch accepted bundle": 019b58d1ed69: Download complete
+Step #0 - "Fetch accepted bundle": db4ac64018ac: Verifying Checksum
+Step #0 - "Fetch accepted bundle": db4ac64018ac: Download complete
+Step #0 - "Fetch accepted bundle": db4ac64018ac: Pull complete
+Step #0 - "Fetch accepted bundle": e22a76a4f47c: Verifying Checksum
+Step #0 - "Fetch accepted bundle": e22a76a4f47c: Download complete
+Step #0 - "Fetch accepted bundle": e22a76a4f47c: Pull complete
+Step #0 - "Fetch accepted bundle": 019b58d1ed69: Pull complete
+Step #0 - "Fetch accepted bundle": Digest: sha256:08c9cb2c82625689f26172f46f2cefdf30c3449959a71492569a824b537d369f
+Step #0 - "Fetch accepted bundle": Status: Downloaded newer image for gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+Step #0 - "Fetch accepted bundle": gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+Step #0 - "Fetch accepted bundle": bash: line 1: python3: command not found
+Finished Step #0 - "Fetch accepted bundle"
+ERROR
+ERROR: build step 0 "gcr.io/google.com/cloudsdktool/cloud-sdk:slim" failed: step exited with non-zero status: 127
+--------------------------------------------------------------------------------

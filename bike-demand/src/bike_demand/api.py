@@ -101,6 +101,8 @@ def create_app(artifacts: Path = ARTIFACTS) -> FastAPI:
         return {
             "status": "ok",
             "model_version": loaded["metadata"]["model_version"],
+            # Verified against the model bytes at start-up (load_model).
+            "model_sha256": loaded["metadata"]["model_sha256"],
             "code_revision": CODE_REVISION,
         }
 

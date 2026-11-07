@@ -643,7 +643,14 @@ Error: Process completed with exit code 1.
 
 **Rejected option:** Increase the tolerance until a failing test becomes green.
 
-**Why:** A tolerance must be justified by measured numerical variation, not convenience. The team must still document repeated measurements or a reproducibility comparison supporting `1e-6`. Until that evidence is recorded, this justification is incomplete.
+**Why:** A tolerance must be justified by measured numerical variation, not convenience.
+
+**Measurement:**
+
+- `bike-demand/scripts/measure_prediction_drift.py` hashes the accepted model's predictions on all 4,358 validation rows and records the reference prediction.
+- **Windows (laptop):** [`lab6-prediction-drift-windows.json`](bike-demand/reports/evidence/lab6-prediction-drift-windows.json): reference `83.56200000000001`, predictions sha256 `c4e42226…`.
+- **Linux:** Cloud Build runs the same script after the tests on every deploy; the first Linux result is copied to `bike-demand/reports/evidence/lab6-prediction-drift-linux.txt` once observed.
+- **Reading:** identical hashes mean byte-identical predictions across the two OSes (measured variation 0). `1e-6` then only absorbs floating-point summation-order differences that a different BLAS or CPU could introduce, and stays far below any change a reviewer would call a regression (predictions are counts of bikes).
 
 #### 9. Repair: Did we fix the cause or hide it?
 
@@ -692,9 +699,13 @@ Error: Process completed with exit code 1.
 
 **Why:** A failed change should not automatically reach the running service.
 
-**Current state:** `cloudbuild.yaml` now runs the same checks as CI (locked `uv sync`, preflight, Ruff, full pytest) as its first step. Cloud Build stops at the first failing step, so a red check means no image is built, pushed or deployed.
+**Current state:**
 
-**Current limitation:** The Cloud Build trigger still does not wait for the GitHub Actions result; the two pipelines run the same checks independently. Reproduce the Cloud Build check step locally (clean container, no `.git`):
+- **Branch:** only `main` deploys, through the Cloud Build trigger.
+- **Before merge:** `main` is protected: a change needs a pull request with green `infrastructure` and `docker` checks, so nothing reaches `main` without a green CI run.
+- **After merge, inside Cloud Build:** the same checks run again, plus the accepted-model regression test, before any image is built. Cloud Build stops at the first failing step, so a red check means no image is built, pushed or deployed.
+
+**Current limitation:** the Cloud Build trigger does not read the GitHub Actions result itself; branch protection is what links the two. Reproduce the Cloud Build check step locally (clean container, no `.git`):
 
 ```powershell
 docker run --rm -v "${PWD}\bike-demand:/w" -w /w -e UV_PYTHON_DOWNLOADS=never -e UV_PROJECT_ENVIRONMENT=/opt/venv --entrypoint bash python:3.12-slim -ceu "apt-get update -qq && apt-get install -y -qq git && pip install -q uv==0.12.23 && uv sync --locked && uv run --locked pytest -q --strict-markers"
@@ -722,7 +733,14 @@ docker run --rm -v "${PWD}\bike-demand:/w" -w /w -e UV_PYTHON_DOWNLOADS=never -e
 
 **Why:** A live verification checks the actual running service and the identity of its code and model.
 
-**Current evidence:** Lab 5 established authenticated health verification on the private Cloud Run service `mlops-fri2-teama-bike-demand` in `europe-west1`. A corresponding GitHub Actions deployment verification is still pending.
+**How it runs (`cloudbuild.yaml`):**
+
+1. **Deploy:** the new revision is deployed with `--no-traffic` and the tag `c-<short sha>`.
+2. **Token:** Cloud Build gets an identity token for the private service.
+3. **Check:** `scripts/verify_deployment.py` checks the tagged revision's `/health`: HTTP 200, `status: ok`, the `model_version` and `model_sha256` from `registry/accepted.json`, and `code_revision` equal to the commit.
+4. **Switch:** only then does the next step route 100% of traffic to that tag.
+
+**Current evidence:** simulated locally against a stand-in service (pass with the right identity, fail with a wrong expected model). The deploy run, the revision it checked and the live check output are saved in `bike-demand/reports/evidence/` after the first real run.
 
 #### 14. Undo: What happens if the live check fails?
 
@@ -732,18 +750,24 @@ docker run --rm -v "${PWD}\bike-demand:/w" -w /w -e UV_PYTHON_DOWNLOADS=never -e
 
 **Why:** Deployment success must include a recovery path, not merely an attempt to start a container.
 
-**Current limitation:** Automated rollback from GitHub Actions has not yet been implemented or demonstrated. This must be tested before the team claims the Lab 6 deployment requirement is complete.
+**How it works:**
+
+- **Undo by construction:** the new revision never receives traffic before it passes the live check. If the check fails, the build stops before "Route traffic to verified revision", and the previously verified revision keeps 100% of traffic; the failed revision stays reachable only through its tag for diagnosis.
+- **Manual undo:** `gcloud run services update-traffic mlops-fri2-teama-bike-demand --to-revisions=<previous revision>=100 --region=europe-west1`.
+
+**Demonstration:**
+
+1. Run the trigger manually with a wrong expected model:
+   `gcloud builds triggers run rmgpgab-mlops-fri2-teama-bike-demand-europe-west1-AlexDreamsypt --branch=main --region=global --substitutions=_EXPECTED_MODEL_OVERRIDE=wrong-model`
+2. Expected: "Verify new revision" fails, traffic is unchanged.
+3. The output is saved in `bike-demand/reports/evidence/` once run.
 
 ### Remaining Lab 6 work
 
-The team must still:
+- Save the first real deploy run and the failed-check demonstration in `bike-demand/reports/evidence/`.
+- Copy the Linux prediction hash from that deploy run and compare it with the Windows one.
 
-- Measure and justify the numerical regression tolerance across environments.
-- Protect `main` so that the `infrastructure` and `docker` checks are required before merging.
-- Observe the first real Cloud Build run with the blocking checks step.
-- Add automated authenticated live verification after deploy (`verify_deployment.py` already accepts an identity token via `BIKE_DEMAND_ID_TOKEN`) and keep the previous revision serving if it fails.
-
-Done since the first version of this list: the raw failing pytest log is committed in `bike-demand/reports/evidence/ci-red-pr36-infrastructure.txt`, and the team Lab 6 report is in `bike-demand/reports/week-03-team.md`.
+Done: raw failing pytest log (`ci-red-pr36-infrastructure.txt`); team Lab 6 report (`bike-demand/reports/week-03-team.md`); actions pinned to commit SHAs; deploy gated on tests, live check and traffic switch in `cloudbuild.yaml`; Windows side of the tolerance measurement.
 
 Incomplete evidence must be reported as incomplete rather than represented as a successful test.
 
@@ -824,7 +848,7 @@ All rules must pass for a candidate to be eligible. Missing or invalid evidence 
 **margin: what size of change matters, and why?**
 
 - **Choice:** 2.0 bikes/hour.
-- **Measurement:** training the accepted settings with 8 different seeds moved validation MAE by at most <SPREAD> bikes/hour (standard deviation <STDEV>; [`lab7-seed-variation.json`](bike-demand/reports/evidence/lab7-seed-variation.json)), so 2.0 is more than 3 times that spread.
+- **Measurement:** training the accepted settings with 8 different seeds moved validation MAE by at most 0.56 bikes/hour (standard deviation 0.18; [`lab7-seed-variation.json`](bike-demand/reports/evidence/lab7-seed-variation.json)), so 2.0 is more than 3 times that spread.
 - **Rejected:** accepting any improvement, however small.
 - **Why:** a gain smaller than seed noise is not a real improvement.
 

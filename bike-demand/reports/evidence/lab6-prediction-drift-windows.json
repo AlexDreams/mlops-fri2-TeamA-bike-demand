@@ -1,0 +1,9 @@
+{
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.12.15",
+  "scikit_learn": "1.9.1",
+  "model_version": "baseline-f01a22df4c39",
+  "reference_prediction": "83.56200000000001",
+  "validation_rows": 4358,
+  "validation_predictions_sha256": "c4e42226d0fc78a6cfdb3902527687bf8d7808adc8d5c1ee1f510f29f2452cee"
+}

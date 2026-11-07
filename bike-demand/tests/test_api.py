@@ -60,6 +60,8 @@ def test_health_with_model(model_artifacts):
     assert response.status_code == 200
     assert response.json()["status"] == "ok"
     assert response.json()["model_version"] == "test-model-v1"
+    # Catches: a service that names a version without proving which bytes it loaded.
+    assert response.json()["model_sha256"] == sha256(model_artifacts / "model.joblib")
 
 
 def test_predict_valid_request(model_artifacts):
