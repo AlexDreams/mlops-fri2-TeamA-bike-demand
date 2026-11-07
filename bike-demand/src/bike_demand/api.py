@@ -116,9 +116,10 @@ def create_app(artifacts: Path = ARTIFACTS) -> FastAPI:
                 detail="model unavailable",
             )
 
-        values = request.model_dump()
-        values["hr"] = (values["hr"] + 1) % 24
-        row = pd.DataFrame([values], columns=list(FEATURES))
+        row = pd.DataFrame(
+            [request.model_dump()],
+            columns=list(FEATURES),
+        )
 
         value = float(loaded["model"].predict(row)[0])
 
