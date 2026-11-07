@@ -954,3 +954,31 @@ All rules must pass for a candidate to be eligible. Missing or invalid evidence 
 - The first build step downloads the bundle named in `registry/accepted.json` and stops unless both digests match.
 - The tests (including the `accepted_model` regression test) then run against it, and only then is the image built and deployed.
 - GitHub Actions cannot read the bucket (no keyless GCP login), so it skips that one test with `-m "not accepted_model"`; Cloud Build runs it.
+
+## Monitoring and incident response (Lab 8)
+
+- **Runbook:** [`RUNBOOK.md`](RUNBOOK.md) (symptoms, first checks, rollback target, verification, escalation).
+- **Incident record:** [`bike-demand/reports/lab8-incident.md`](bike-demand/reports/lab8-incident.md).
+- **Raw evidence:** [`bike-demand/reports/evidence/`](bike-demand/reports/evidence/) (`lab8-*` folders and files).
+
+### Signal definitions
+
+[`bike-demand/scripts/monitor_replay.py`](bike-demand/scripts/monitor_replay.py) replays the same population against the live service in every period (baseline, incident, recovery), so the three periods are comparable.
+
+| Signal | Definition |
+|---|---|
+| Population | every 20th validation-period row (2012-01-01..2012-06-30) in time order: 218 rows. The held test period is never used. |
+| Eligible attempt | one valid `POST /predict` built from one of those rows. |
+| Good eligible attempt | HTTP 200 with a finite, nonnegative `prediction` and a `model_version`. |
+| Success rate | good eligible attempts / all eligible attempts, in the replay window (UTC start and end recorded). |
+| Rejection probes | 10 deliberately invalid requests (`hr = 24`), expected HTTP 422, counted separately: an intentional rejection is never a failure. |
+| Quality | MAE of the good predictions against the rows' `cnt` labels, in bikes per hour. Labels are never sent to the service. |
+| Latency | client-side milliseconds per eligible attempt, p50 and p95 (laptop to Cloud Run, so it includes network time). |
+| Identity | `/health` before and after the replay: `model_version`, `model_sha256`, `code_revision`. |
+| Missing data | a network error or timeout is recorded with status `null` and counts as a failed eligible attempt. |
+
+**Raw outputs:** each run writes `events.jsonl` (one line per request, with its UTC time) and `summary.json`.
+
+**Service-side signals:** Cloud Run request events (`jsonPayload.event = "http_request"`) give status, latency, model version and code revision per revision; see [`RUNBOOK.md`](RUNBOOK.md), section 2.3.
+
+**Threshold choice:** with the same model and code, the replay is deterministic (byte-identical predictions measured on Windows and Linux). We open an incident on any success rate below 1.0, any 5xx on `/predict`, or an MAE more than 1.0 bikes/hour above the baseline. No universal target exists; these come from our own measured baseline.
