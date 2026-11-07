@@ -649,8 +649,9 @@ Error: Process completed with exit code 1.
 
 - `bike-demand/scripts/measure_prediction_drift.py` hashes the accepted model's predictions on all 4,358 validation rows and records the reference prediction.
 - **Windows (laptop):** [`lab6-prediction-drift-windows.json`](bike-demand/reports/evidence/lab6-prediction-drift-windows.json): reference `83.56200000000001`, predictions sha256 `c4e42226…`.
-- **Linux:** Cloud Build runs the same script after the tests on every deploy; the first Linux result is copied to `bike-demand/reports/evidence/lab6-prediction-drift-linux.txt` once observed.
-- **Reading:** identical hashes mean byte-identical predictions across the two OSes (measured variation 0). `1e-6` then only absorbs floating-point summation-order differences that a different BLAS or CPU could introduce, and stays far below any change a reviewer would call a regression (predictions are counts of bikes).
+- **Linux (Cloud Build run `b67dc51e…`, commit `ba57c3a`):** [`lab6-prediction-drift-linux.txt`](bike-demand/reports/evidence/lab6-prediction-drift-linux.txt): reference `83.56200000000001`, predictions sha256 `c4e42226…`. Cloud Build prints it again on every deploy.
+- **Result:** the hashes are identical: byte-identical predictions on Windows 11 and Linux, Python 3.12, scikit-learn 1.9.1. Measured cross-environment variation: 0.
+- **Why `1e-6` and not `0`:** a different CPU or BLAS could still change the last bits of a floating-point sum; `1e-6` absorbs that and stays far below any change a reviewer would call a regression (predictions are counts of bikes).
 
 #### 9. Repair: Did we fix the cause or hide it?
 
@@ -735,12 +736,27 @@ docker run --rm -v "${PWD}\bike-demand:/w" -w /w -e UV_PYTHON_DOWNLOADS=never -e
 
 **How it runs (`cloudbuild.yaml`):**
 
-1. **Deploy:** the new revision is deployed with `--no-traffic` and the tag `c-<short sha>`.
-2. **Token:** Cloud Build gets an identity token for the private service.
-3. **Check:** `scripts/verify_deployment.py` checks the tagged revision's `/health`: HTTP 200, `status: ok`, the `model_version` and `model_sha256` from `registry/accepted.json`, and `code_revision` equal to the commit.
-4. **Switch:** only then does the next step route 100% of traffic to that tag.
+1. **Check the built image:** Cloud Build starts the image it just built on its build network and runs `scripts/verify_deployment.py` against it. It must see:
+   - HTTP 200 and `status: ok`;
+   - the `model_version` and `model_sha256` from `registry/accepted.json`;
+   - `code_revision` equal to the commit.
 
-**Current evidence:** simulated locally against a stand-in service (pass with the right identity, fail with a wrong expected model). The deploy run, the revision it checked and the live check output are saved in `bike-demand/reports/evidence/` after the first real run.
+   A mismatch stops the build before anything is pushed or deployed.
+2. **Deploy without traffic:** the image is pushed and deployed with `--no-traffic` and the tag `c-<short sha>`. A revision that cannot start fails this step.
+3. **Switch:** only then does the next step route 100% of traffic to that tag.
+4. **Check the live service:** we run `verify_deployment.py` against the live URL from a laptop, with the user's identity token (`gcloud auth print-identity-token`).
+
+**Rejected option:** checking the live tag URL from inside Cloud Build.
+
+**Why rejected:** we built and tried it (run `b67dc51e…`), and the step failed with `No identity token can be obtained from the current credentials`.
+
+- **Cause:** Cloud Build's metadata server does not issue identity tokens; a probe build got `HTTP 404`.
+- **Missing permission:** the build service account would need permission to mint identity tokens for itself, which our current IAM role cannot grant on that account without changing the shared project's IAM policy. We chose not to.
+
+**Evidence:**
+
+- [`lab6-cloudbuild-token-red.txt`](bike-demand/reports/evidence/lab6-cloudbuild-token-red.txt): the failed token step. Traffic stayed on the previous revision `00019`; the new revision `00020` got 0%.
+- [`lab6-image-check-probe.txt`](bike-demand/reports/evidence/lab6-image-check-probe.txt): the image check run for real in Cloud Build on the `ba57c3a` image. The right identity gives `PASSED`; a wrong expected model gives `FAILED` with exit status 1.
 
 #### 14. Undo: What happens if the live check fails?
 
@@ -752,22 +768,16 @@ docker run --rm -v "${PWD}\bike-demand:/w" -w /w -e UV_PYTHON_DOWNLOADS=never -e
 
 **How it works:**
 
-- **Undo by construction:** the new revision never receives traffic before it passes the live check. If the check fails, the build stops before "Route traffic to verified revision", and the previously verified revision keeps 100% of traffic; the failed revision stays reachable only through its tag for diagnosis.
-- **Manual undo:** `gcloud run services update-traffic mlops-fri2-teama-bike-demand --to-revisions=<previous revision>=100 --region=europe-west1`.
+- **Undo by construction:** a new revision never receives traffic before its image passed the identity check and the revision started. If either fails, the build stops before "Route traffic to verified revision" and the previously verified revision keeps 100% of traffic.
+- **Observed for real:** in run `b67dc51e…`, a later step failed; revision `00020` stayed at 0% and `00019` kept serving.
+- **Manual undo, if the laptop live check fails after the switch:** `gcloud run services update-traffic mlops-fri2-teama-bike-demand --to-revisions=<previous revision>=100 --region=europe-west1`. Cloud Run keeps previous revisions, so no rebuild or retraining is needed.
 
-**Demonstration:**
+### Remaining Lab 6 limitations
 
-1. Run the trigger manually with a wrong expected model:
-   `gcloud builds triggers run rmgpgab-mlops-fri2-teama-bike-demand-europe-west1-AlexDreamsypt --branch=main --region=global --substitutions=_EXPECTED_MODEL_OVERRIDE=wrong-model`
-2. Expected: "Verify new revision" fails, traffic is unchanged.
-3. The output is saved in `bike-demand/reports/evidence/` once run.
+- **Live check:** it is run from a laptop, not by Cloud Build (identity-token permission, see question 13).
+- **Gate:** the Cloud Build trigger does not read the GitHub Actions result itself; branch protection on `main` is what makes a green CI run a precondition.
 
-### Remaining Lab 6 work
-
-- Save the first real deploy run and the failed-check demonstration in `bike-demand/reports/evidence/`.
-- Copy the Linux prediction hash from that deploy run and compare it with the Windows one.
-
-Done: raw failing pytest log (`ci-red-pr36-infrastructure.txt`); team Lab 6 report (`bike-demand/reports/week-03-team.md`); actions pinned to commit SHAs; deploy gated on tests, live check and traffic switch in `cloudbuild.yaml`; Windows side of the tolerance measurement.
+Done: raw failing pytest log (`ci-red-pr36-infrastructure.txt`); team Lab 6 report (`bike-demand/reports/week-03-team.md`); actions pinned to commit SHAs; `main` protected (checks `infrastructure` and `docker`, one approving review); deploy gated on tests, image identity check and traffic switch in `cloudbuild.yaml`; cross-OS tolerance measured (Windows = Linux).
 
 Incomplete evidence must be reported as incomplete rather than represented as a successful test.
 

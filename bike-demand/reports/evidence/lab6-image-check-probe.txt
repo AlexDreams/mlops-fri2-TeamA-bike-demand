@@ -1,0 +1,142 @@
+﻿----------------------------- REMOTE BUILD OUTPUT ------------------------------
+starting build "5e297300-3c69-4990-8197-2edd5eb969e1" using release legacy
+FETCHSOURCE
+Fetching storage object: gs://mlops-demo-512323_cloudbuild/source/1794059626.755603-7a73f001fabf4af18fae44601e5eeae2.tgz#1794059631177868
+Copying gs://mlops-demo-512323_cloudbuild/source/1794059626.755603-7a73f001fabf4af18fae44601e5eeae2.tgz#1794059631177868...
+/ [0 files][    0.0 B/  2.1 KiB]                                                
+/ [1 files][  2.1 KiB/  2.1 KiB]
+Operation completed over 1 objects/2.1 KiB.
+BUILD
+Starting Step #0 - "Start built image"
+Step #0 - "Start built image": Already have image (with digest): gcr.io/cloud-builders/docker
+Step #0 - "Start built image": Unable to find image 'europe-west1-docker.pkg.dev/mlops-demo-512323/cloud-run-source-deploy/mlops-fri2-teama-bike-demand:ba57c3abf72d71ae1b37f8b217b66ce861731dc5' locally
+Step #0 - "Start built image": ba57c3abf72d71ae1b37f8b217b66ce861731dc5: Pulling from mlops-demo-512323/cloud-run-source-deploy/mlops-fri2-teama-bike-demand
+Step #0 - "Start built image": c74288390aeb: Pulling fs layer
+Step #0 - "Start built image": 68bced9e0afa: Pulling fs layer
+Step #0 - "Start built image": 2dc99d2d0a39: Pulling fs layer
+Step #0 - "Start built image": 05e0eee5572e: Pulling fs layer
+Step #0 - "Start built image": b21c9b4c1821: Pulling fs layer
+Step #0 - "Start built image": 120f4b5180db: Pulling fs layer
+Step #0 - "Start built image": a347b26e0402: Pulling fs layer
+Step #0 - "Start built image": 3ef20066a4d9: Pulling fs layer
+Step #0 - "Start built image": cf7cfaf42d36: Pulling fs layer
+Step #0 - "Start built image": e7a12a8bc8d6: Pulling fs layer
+Step #0 - "Start built image": d29c91ad2d09: Pulling fs layer
+Step #0 - "Start built image": 6fe4cd2fae52: Pulling fs layer
+Step #0 - "Start built image": 097ecc80008f: Pulling fs layer
+Step #0 - "Start built image": 02be1a8a8aab: Pulling fs layer
+Step #0 - "Start built image": f7c3462cbd6a: Pulling fs layer
+Step #0 - "Start built image": c1a3ec6a09ac: Pulling fs layer
+Step #0 - "Start built image": 03e3f5e4b1b3: Pulling fs layer
+Step #0 - "Start built image": 520925315132: Pulling fs layer
+Step #0 - "Start built image": a347b26e0402: Waiting
+Step #0 - "Start built image": 3ef20066a4d9: Waiting
+Step #0 - "Start built image": cf7cfaf42d36: Waiting
+Step #0 - "Start built image": e7a12a8bc8d6: Waiting
+Step #0 - "Start built image": d29c91ad2d09: Waiting
+Step #0 - "Start built image": 6fe4cd2fae52: Waiting
+Step #0 - "Start built image": 097ecc80008f: Waiting
+Step #0 - "Start built image": 02be1a8a8aab: Waiting
+Step #0 - "Start built image": f7c3462cbd6a: Waiting
+Step #0 - "Start built image": c1a3ec6a09ac: Waiting
+Step #0 - "Start built image": 03e3f5e4b1b3: Waiting
+Step #0 - "Start built image": 520925315132: Waiting
+Step #0 - "Start built image": 05e0eee5572e: Verifying Checksum
+Step #0 - "Start built image": 05e0eee5572e: Download complete
+Step #0 - "Start built image": a347b26e0402: Verifying Checksum
+Step #0 - "Start built image": a347b26e0402: Download complete
+Step #0 - "Start built image": 68bced9e0afa: Verifying Checksum
+Step #0 - "Start built image": 68bced9e0afa: Download complete
+Step #0 - "Start built image": 3ef20066a4d9: Verifying Checksum
+Step #0 - "Start built image": 3ef20066a4d9: Download complete
+Step #0 - "Start built image": 2dc99d2d0a39: Verifying Checksum
+Step #0 - "Start built image": 2dc99d2d0a39: Download complete
+Step #0 - "Start built image": b21c9b4c1821: Verifying Checksum
+Step #0 - "Start built image": b21c9b4c1821: Download complete
+Step #0 - "Start built image": c74288390aeb: Verifying Checksum
+Step #0 - "Start built image": c74288390aeb: Download complete
+Step #0 - "Start built image": 120f4b5180db: Verifying Checksum
+Step #0 - "Start built image": 120f4b5180db: Download complete
+Step #0 - "Start built image": d29c91ad2d09: Download complete
+Step #0 - "Start built image": f7c3462cbd6a: Verifying Checksum
+Step #0 - "Start built image": f7c3462cbd6a: Download complete
+Step #0 - "Start built image": 6fe4cd2fae52: Verifying Checksum
+Step #0 - "Start built image": 6fe4cd2fae52: Download complete
+Step #0 - "Start built image": 097ecc80008f: Verifying Checksum
+Step #0 - "Start built image": 097ecc80008f: Download complete
+Step #0 - "Start built image": 02be1a8a8aab: Verifying Checksum
+Step #0 - "Start built image": 02be1a8a8aab: Download complete
+Step #0 - "Start built image": e7a12a8bc8d6: Verifying Checksum
+Step #0 - "Start built image": e7a12a8bc8d6: Download complete
+Step #0 - "Start built image": c1a3ec6a09ac: Verifying Checksum
+Step #0 - "Start built image": c1a3ec6a09ac: Download complete
+Step #0 - "Start built image": c74288390aeb: Pull complete
+Step #0 - "Start built image": 03e3f5e4b1b3: Verifying Checksum
+Step #0 - "Start built image": 03e3f5e4b1b3: Download complete
+Step #0 - "Start built image": 68bced9e0afa: Pull complete
+Step #0 - "Start built image": 2dc99d2d0a39: Pull complete
+Step #0 - "Start built image": 05e0eee5572e: Pull complete
+Step #0 - "Start built image": b21c9b4c1821: Pull complete
+Step #0 - "Start built image": 520925315132: Verifying Checksum
+Step #0 - "Start built image": 520925315132: Download complete
+Step #0 - "Start built image": 120f4b5180db: Pull complete
+Step #0 - "Start built image": a347b26e0402: Pull complete
+Step #0 - "Start built image": 3ef20066a4d9: Pull complete
+Step #0 - "Start built image": cf7cfaf42d36: Verifying Checksum
+Step #0 - "Start built image": cf7cfaf42d36: Download complete
+Step #0 - "Start built image": cf7cfaf42d36: Pull complete
+Step #0 - "Start built image": e7a12a8bc8d6: Pull complete
+Step #0 - "Start built image": d29c91ad2d09: Pull complete
+Step #0 - "Start built image": 6fe4cd2fae52: Pull complete
+Step #0 - "Start built image": 097ecc80008f: Pull complete
+Step #0 - "Start built image": 02be1a8a8aab: Pull complete
+Step #0 - "Start built image": f7c3462cbd6a: Pull complete
+Step #0 - "Start built image": c1a3ec6a09ac: Pull complete
+Step #0 - "Start built image": 03e3f5e4b1b3: Pull complete
+Step #0 - "Start built image": 520925315132: Pull complete
+Step #0 - "Start built image": Digest: sha256:f2062b05726108cda0e5de39d27baf9263ab015a2b4cdaca6e6e7743c83ceb6f
+Step #0 - "Start built image": Status: Downloaded newer image for europe-west1-docker.pkg.dev/mlops-demo-512323/cloud-run-source-deploy/mlops-fri2-teama-bike-demand:ba57c3abf72d71ae1b37f8b217b66ce861731dc5
+Step #0 - "Start built image": 97bd496e2cd3db7055de872f17d957c182f8a4efac6915f462f33488edad5c91
+Finished Step #0 - "Start built image"
+Starting Step #1 - "Verify built image"
+Step #1 - "Verify built image": Pulling image: python:3.12-slim
+Step #1 - "Verify built image": 3.12-slim: Pulling from library/python
+Step #1 - "Verify built image": 37fb86c2a767: Pulling fs layer
+Step #1 - "Verify built image": 68bced9e0afa: Pulling fs layer
+Step #1 - "Verify built image": 2dc99d2d0a39: Pulling fs layer
+Step #1 - "Verify built image": 05e0eee5572e: Pulling fs layer
+Step #1 - "Verify built image": 05e0eee5572e: Verifying Checksum
+Step #1 - "Verify built image": 05e0eee5572e: Download complete
+Step #1 - "Verify built image": 68bced9e0afa: Verifying Checksum
+Step #1 - "Verify built image": 68bced9e0afa: Download complete
+Step #1 - "Verify built image": 2dc99d2d0a39: Verifying Checksum
+Step #1 - "Verify built image": 2dc99d2d0a39: Download complete
+Step #1 - "Verify built image": 37fb86c2a767: Verifying Checksum
+Step #1 - "Verify built image": 37fb86c2a767: Download complete
+Step #1 - "Verify built image": 37fb86c2a767: Pull complete
+Step #1 - "Verify built image": 68bced9e0afa: Pull complete
+Step #1 - "Verify built image": 2dc99d2d0a39: Pull complete
+Step #1 - "Verify built image": 05e0eee5572e: Pull complete
+Step #1 - "Verify built image": Digest: sha256:4840d514c583a4d3d8cad3940e68dee6f0f6f3635c12fcd0a3d74c21a5b93a54
+Step #1 - "Verify built image": Status: Downloaded newer image for python:3.12-slim
+Step #1 - "Verify built image": docker.io/library/python:3.12-slim
+Step #1 - "Verify built image": HTTP status: expected=200, observed=200 -> OK
+Step #1 - "Verify built image": readiness: expected='ok', observed='ok' -> OK
+Step #1 - "Verify built image": model_version: expected='baseline-f01a22df4c39', observed='baseline-f01a22df4c39' -> OK
+Step #1 - "Verify built image": code_revision: expected='ba57c3abf72d71ae1b37f8b217b66ce861731dc5', observed='ba57c3abf72d71ae1b37f8b217b66ce861731dc5' -> OK
+Step #1 - "Verify built image": model_sha256: expected='fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304', observed='fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304' -> OK
+Step #1 - "Verify built image": Deployment verification PASSED
+Finished Step #1 - "Verify built image"
+Starting Step #2 - "Wrong model must fail"
+Step #2 - "Wrong model must fail": Already have image (with digest): python:3.12-slim
+Step #2 - "Wrong model must fail": HTTP status: expected=200, observed=200 -> OK
+Step #2 - "Wrong model must fail": readiness: expected='ok', observed='ok' -> OK
+Step #2 - "Wrong model must fail": model_version: expected='wrong-model', observed='baseline-f01a22df4c39' -> FAIL
+Step #2 - "Wrong model must fail": code_revision: expected='ba57c3abf72d71ae1b37f8b217b66ce861731dc5', observed='ba57c3abf72d71ae1b37f8b217b66ce861731dc5' -> OK
+Step #2 - "Wrong model must fail": model_sha256: expected='fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304', observed='fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304' -> OK
+Step #2 - "Wrong model must fail": Deployment verification FAILED
+Step #2 - "Wrong model must fail": wrong-model check exit status: 1
+Finished Step #2 - "Wrong model must fail"
+PUSH
+DONE
+--------------------------------------------------------------------------------
