@@ -1,5 +1,27 @@
 
 steps:
+  # The accepted model is not in Git. Download the bundle named by the reviewed
+  # registry/accepted.json and refuse to continue unless both digests match.
+  - id: "Fetch accepted bundle"
+    name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
+    dir: "bike-demand"
+    entrypoint: "bash"
+    args:
+      - "-ceu"
+      - |
+        uri=$$(python3 -c 'import json; print(json.load(open("registry/accepted.json"))["uri"])')
+        mkdir -p artifacts
+        gcloud storage cp "$${uri}model.joblib" "$${uri}model-metadata.json" artifacts/
+        python3 -c '
+        import hashlib, json
+        accepted = json.load(open("registry/accepted.json"))
+        for name, key in (("model.joblib", "model_sha256"), ("model-metadata.json", "metadata_sha256")):
+            digest = hashlib.sha256(open("artifacts/" + name, "rb").read()).hexdigest()
+            if digest != accepted[key]:
+                raise SystemExit(name + ": digest " + digest + " != " + accepted[key])
+        print("Accepted bundle verified:", accepted["model_version"])
+        '
+
   # Same checks as .github/workflows/ci.yml. Cloud Build stops at the first
   # failing step, so a red check means no image is built, pushed or deployed.
   - id: "Run blocking checks"

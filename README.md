@@ -844,4 +844,39 @@ All rules must pass for a candidate to be eligible. Missing or invalid evidence 
 
 ### Accepted state and recovery (Alexandre)
 
-<!-- separate, identity, switch, concurrent, retain, how to recover without retraining -->
+**separate: what may a candidate write?**
+
+- **Choice:** a candidate writes only `bike-demand/runs/<run_id>/` (not committed) and its decision record in `bike-demand/decisions/`. Only `bike_demand.promote` writes the bucket and `registry/accepted.json`, and only from an `eligible` decision.
+- **Rejected:** training straight into `artifacts/`, as `train.py` does.
+- **Why:** a rejected candidate must not be able to reach the served model.
+
+**identity: what stays immutable for its lifetime?**
+
+- **Choice:** a version is its `model_version` plus the SHA-256 of `model.joblib` and `model-metadata.json`. Bundles are uploaded to `gs://mlops-fri2-teama-bike-demand-models/bundles/<model_version>/` with `--no-clobber`, and the bucket keeps object versions.
+- **Rejected:** overwriting a single `model.joblib`.
+- **Why:** once accepted, a version's bytes never change, so a digest checked today still means the same bytes later.
+
+**switch: what if promotion stops halfway?**
+
+- **Choice:** upload first, verify by re-downloading and comparing digests, then rewrite `accepted.json` in one atomic file replace. If anything stops before that, the pointer is unchanged and the service keeps serving the previous version; an uploaded but unreferenced bundle is harmless.
+- **Rejected:** changing the pointer before the bytes are safely stored.
+- **Why:** the pointer must never name bytes that do not exist.
+- **Going live:** the new pointer only takes effect through a reviewed PR whose merge triggers Cloud Build.
+
+**concurrent: what if the incumbent changed?**
+
+- **Choice:** promotion refuses if `accepted.json` no longer names the incumbent version and digest the gate compared against.
+- **Rejected:** promoting anyway.
+- **Why:** the decision was only valid against that incumbent; rerun the gate.
+
+**retain: what recovers without retraining?**
+
+- **Choice:** the previous bundle stays in the bucket, `previous` in `accepted.json` names it with its digests, and its Cloud Run revision is kept.
+- **Recovery, fastest:** `gcloud run services update-traffic mlops-fri2-teama-bike-demand --to-revisions=<previous revision>=100 --region=europe-west1`.
+- **Recovery, durable:** a reviewed PR restoring the previous pointer, so the next deploy serves it too.
+
+**How Cloud Build gets the model:**
+
+- The first build step downloads the bundle named in `registry/accepted.json` and stops unless both digests match.
+- The tests (including the `accepted_model` regression test) then run against it, and only then is the image built and deployed.
+- GitHub Actions cannot read the bucket (no keyless GCP login), so it skips that one test with `-m "not accepted_model"`; Cloud Build runs it.

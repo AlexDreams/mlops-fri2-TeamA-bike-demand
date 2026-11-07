@@ -15,3 +15,5 @@ artifacts/
 tracking/
 roster.txt
 reports/*private*
+runs/
+bundles/

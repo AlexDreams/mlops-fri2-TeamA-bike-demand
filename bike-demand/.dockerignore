@@ -12,4 +12,5 @@ reports/metrics-history.jsonl
 .env
 .env.*
 .DS_Store
-*.log
+*.logruns
+bundles
