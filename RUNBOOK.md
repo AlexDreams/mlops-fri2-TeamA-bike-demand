@@ -6,7 +6,7 @@ For the next operator. Follow the steps in order. Record every command output (o
 
 | Item | Value |
 |---|---|
-| Last verified | `<UTC date, filled after each verified recovery>` by `<name>` |
+| Last verified | 2026-11-07 16:50 UTC by Alexandre, after the Lab 8 drill: revision `00030-gew`, code `3cd9499`, model `baseline-f01a22df4c39` (sha256 `fd98ceaf…`), identity PASSED, replay MAE 84.25 (= baseline). Record: [`bike-demand/reports/lab8-incident.md`](bike-demand/reports/lab8-incident.md). |
 | Service | Cloud Run `mlops-fri2-teama-bike-demand`, region `europe-west1`, project `mlops-demo-512323`, private (identity token required) |
 | URL | `https://mlops-fri2-teama-bike-demand-709271018248.europe-west1.run.app` |
 | Accepted model | the version and SHA-256 in [`bike-demand/registry/accepted.json`](bike-demand/registry/accepted.json); bundles in `gs://mlops-fri2-teama-bike-demand-models/bundles/<version>/` |
@@ -113,13 +113,15 @@ Keep the rejected ones in the incident record.
 
 Steps:
 
-1. **Optional pre-check** of the target through a temporary tag, without moving traffic:
+1. **Pre-check** of the target, without moving traffic. Every deploy already tags its revision `c-<short sha>`; use that tag's URL (from `status.traffic` in section 2.2), or add a temporary tag if it has none:
 
    ```powershell
    & $g run services update-traffic $svc @where --update-tags=rollback=<target revision>
    $tagUrl = "https://rollback---" + ((& $g run services describe $svc @where --format="value(status.url)") -replace '^https://', '')
    uv run --project bike-demand python bike-demand/scripts/verify_deployment.py --url $tagUrl --expected-model <...> --expected-model-sha256 <...> --expected-revision <target commit>
    ```
+
+   **Learned in the Lab 8 drill:** a revision without traffic is scaled to zero, so its first request can take more than the script's 10 s timeout and fail with `The read operation timed out`. That is a cold start, not an identity mismatch. Run the same command again, up to three times, before deciding. A `FAIL` on `model_*` or `code_revision` is a real mismatch: never switch to that target.
 
 2. **The one controlled change:**
 

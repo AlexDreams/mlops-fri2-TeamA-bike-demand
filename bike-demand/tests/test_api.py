@@ -150,3 +150,43 @@ def test_model_checksum_mismatch(model_artifacts):
         response = client.get("/health")
 
     assert response.status_code == 503
+
+
+class RecordingModel:
+    """Records the row the API passes to the model."""
+
+    seen = []
+
+    def predict(self, dataframe):
+        RecordingModel.seen.append(dataframe.iloc[0].to_dict())
+        return np.array([1.0])
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [("hr", 0), ("hr", 23), ("weathersit", 3), ("weathersit", 4), ("hum", 0.5)],
+)
+def test_request_values_reach_the_model_unchanged(tmp_path, field, value):
+    # Catches: request handling that rewrites a feature before prediction (a
+    # shifted hour, a remapped or rejected weather code), which the fake model
+    # above cannot see because it ignores its input.
+    model_path = tmp_path / "model.joblib"
+    joblib.dump(RecordingModel(), model_path)
+    (tmp_path / "model-metadata.json").write_text(
+        json.dumps(
+            {
+                "model_version": "test-model-v1",
+                "model_sha256": sha256(model_path),
+                "features": list(FEATURES),
+            }
+        ),
+        encoding="utf-8",
+    )
+    RecordingModel.seen.clear()
+    request = {**VALID_REQUEST, field: value}
+
+    with TestClient(create_app(tmp_path)) as client:
+        response = client.post("/predict", json=request)
+
+    assert response.status_code == 200
+    assert RecordingModel.seen == [{name: request[name] for name in FEATURES}]
