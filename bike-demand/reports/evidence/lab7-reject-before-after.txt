@@ -1,0 +1,18 @@
+﻿=== BEFORE official runs 2026-11-07T14:42:25.2042991Z
+C59EE048AF0FD4EB381A2512F3EFD2BF71FBBE23C0F0B5D3B39213467202C5C2
+mlops-fri2-teama-bike-demand-00020-jeg;mlops-fri2-teama-bike-demand-00021-rih	100
+HTTP status: expected=200, observed=200 -> OK
+readiness: expected='ok', observed='ok' -> OK
+model_version: expected='baseline-f01a22df4c39', observed='baseline-f01a22df4c39' -> OK
+code_revision: expected='fb9ebe330a4312c6e63a2e7be6f4b2d4f59cc500', observed='fb9ebe330a4312c6e63a2e7be6f4b2d4f59cc500' -> OK
+model_sha256: expected='fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304', observed='fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304' -> OK
+Deployment verification PASSED
+=== AFTER official runs 2026-11-07T14:46:55.3634157Z
+C59EE048AF0FD4EB381A2512F3EFD2BF71FBBE23C0F0B5D3B39213467202C5C2
+mlops-fri2-teama-bike-demand-00020-jeg;mlops-fri2-teama-bike-demand-00021-rih	100
+HTTP status: expected=200, observed=200 -> OK
+readiness: expected='ok', observed='ok' -> OK
+model_version: expected='baseline-f01a22df4c39', observed='baseline-f01a22df4c39' -> OK
+code_revision: expected='fb9ebe330a4312c6e63a2e7be6f4b2d4f59cc500', observed='fb9ebe330a4312c6e63a2e7be6f4b2d4f59cc500' -> OK
+model_sha256: expected='fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304', observed='fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304' -> OK
+Deployment verification PASSED

@@ -1,0 +1,187 @@
+{
+  "decision_version": 1,
+  "run_id": "20261107T144452Z-same-as-accepted-23a0c4",
+  "timestamp": "2026-11-07T14:44:55.772058+00:00",
+  "outcome": "rejected",
+  "reasons": [
+    "quality.improves_on_accepted: fail (observed 86.84685685591091, expected <= accepted 86.847 - 2.0)"
+  ],
+  "policy": {
+    "path": "configs/gate-policy.yaml",
+    "sha256": "20aed816ab6213b8a508df96df4b64e0b24451c44a7bbf67388c3dcbf4b91d91",
+    "policy_version": 1
+  },
+  "candidate": {
+    "model_version": "rf-35ccf9090960",
+    "model_sha256": "fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304",
+    "path": "runs/20261107T144452Z-same-as-accepted-23a0c4/candidate",
+    "candidate_name": "same-as-accepted",
+    "config_sha256": "8f33700e6bc6d327f6a2e1d2b3806ba3ebf3bf52e205ff28f4845889074f95e6",
+    "training_commit": "fb9ebe330a4312c6e63a2e7be6f4b2d4f59cc500"
+  },
+  "incumbent": {
+    "model_version": "baseline-f01a22df4c39",
+    "model_sha256": "fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304"
+  },
+  "evaluator": {
+    "commit": "fb9ebe330a4312c6e63a2e7be6f4b2d4f59cc500",
+    "working_tree_dirty": false
+  },
+  "evaluation": {
+    "window": "validation 2012-01-01..2012-06-30",
+    "metric": "MAE, bikes per hour",
+    "rows": 4358,
+    "naive_mae": 154.23179306864967,
+    "candidate_mae": 86.84685685591091,
+    "incumbent_mae": 86.84685685591091,
+    "peak_rows": 1274,
+    "candidate_peak_mae": 161.20244763295824,
+    "incumbent_peak_mae": 161.20244763295824,
+    "bundle_mb": 5.245632,
+    "p95_predict_ms": 12.454949997663782
+  },
+  "checks": [
+    {
+      "group": "integrity",
+      "name": "data_snapshot",
+      "status": "pass",
+      "observed": "e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f",
+      "expected": "manifest"
+    },
+    {
+      "group": "integrity",
+      "name": "clean_checkout",
+      "status": "pass",
+      "observed": {
+        "commit": "fb9ebe330a4312c6e63a2e7be6f4b2d4f59cc500",
+        "working_tree_dirty": false
+      },
+      "expected": {
+        "commit": "known",
+        "working_tree_dirty": false
+      }
+    },
+    {
+      "group": "integrity",
+      "name": "candidate_bytes",
+      "status": "pass",
+      "observed": "fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304",
+      "expected": "fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304"
+    },
+    {
+      "group": "integrity",
+      "name": "candidate_contract",
+      "status": "pass",
+      "observed": {
+        "features": [
+          "season",
+          "yr",
+          "mnth",
+          "hr",
+          "holiday",
+          "weekday",
+          "workingday",
+          "weathersit",
+          "temp",
+          "atemp",
+          "hum",
+          "windspeed"
+        ],
+        "data_sha256": "e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f"
+      },
+      "expected": {
+        "features": [
+          "season",
+          "yr",
+          "mnth",
+          "hr",
+          "holiday",
+          "weekday",
+          "workingday",
+          "weathersit",
+          "temp",
+          "atemp",
+          "hum",
+          "windspeed"
+        ],
+        "data_sha256": "e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f"
+      }
+    },
+    {
+      "group": "integrity",
+      "name": "candidate_clean_checkout",
+      "status": "pass",
+      "observed": {
+        "commit": "fb9ebe330a4312c6e63a2e7be6f4b2d4f59cc500",
+        "working_tree_dirty": false
+      },
+      "expected": {
+        "commit": "known",
+        "working_tree_dirty": false
+      }
+    },
+    {
+      "group": "integrity",
+      "name": "incumbent_bytes",
+      "status": "pass",
+      "observed": "fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304",
+      "expected": "fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304"
+    },
+    {
+      "group": "integrity",
+      "name": "incumbent_version",
+      "status": "pass",
+      "observed": "baseline-f01a22df4c39",
+      "expected": "baseline-f01a22df4c39"
+    },
+    {
+      "group": "integrity",
+      "name": "validation_rows",
+      "status": "pass",
+      "observed": 4358,
+      "expected": 4358
+    },
+    {
+      "group": "integrity",
+      "name": "finite_predictions",
+      "status": "pass",
+      "observed": "checked",
+      "expected": "all finite"
+    },
+    {
+      "group": "quality",
+      "name": "beats_naive",
+      "status": "pass",
+      "observed": 86.84685685591091,
+      "expected": "<= 0.6 x naive (154.232)"
+    },
+    {
+      "group": "quality",
+      "name": "improves_on_accepted",
+      "status": "fail",
+      "observed": 86.84685685591091,
+      "expected": "<= accepted 86.847 - 2.0"
+    },
+    {
+      "group": "quality",
+      "name": "peak_hours_no_regression",
+      "status": "pass",
+      "observed": 161.20244763295824,
+      "expected": "<= accepted peak 161.202 + 5.0"
+    },
+    {
+      "group": "operation",
+      "name": "bundle_size",
+      "status": "pass",
+      "observed": 5.245632,
+      "expected": "<= 100 MB"
+    },
+    {
+      "group": "operation",
+      "name": "p95_single_row_latency",
+      "status": "pass",
+      "observed": 12.454949997663782,
+      "expected": "<= 50 ms (local, warm, 200 calls)"
+    }
+  ]
+}
