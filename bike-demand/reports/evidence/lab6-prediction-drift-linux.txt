@@ -1,0 +1,7 @@
+﻿Step #2 - "Run blocking checks":   "platform": "Linux-5.10.0-32-cloud-amd64-x86_64-with-glibc2.41",
+Step #2 - "Run blocking checks":   "python": "3.12.16",
+Step #2 - "Run blocking checks":   "scikit_learn": "1.9.1",
+Step #2 - "Run blocking checks":   "model_version": "baseline-f01a22df4c39",
+Step #2 - "Run blocking checks":   "reference_prediction": "83.56200000000001",
+Step #2 - "Run blocking checks":   "validation_rows": 4358,
+Step #2 - "Run blocking checks":   "validation_predictions_sha256": "c4e42226d0fc78a6cfdb3902527687bf8d7808adc8d5c1ee1f510f29f2452cee"

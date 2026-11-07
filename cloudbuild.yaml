@@ -6,7 +6,7 @@ steps:
   # (Python image), then download that bundle and refuse to continue unless both
   # digests match (gcloud image; it has no python3 on its PATH).
   # _EXPECTED_MODEL_OVERRIDE is empty on normal runs; setting it to a wrong value
-  # on a manual run demonstrates that a failed live check leaves traffic unchanged.
+  # on a manual run demonstrates that a failed identity check deploys nothing.
   - id: "Read accepted pointer"
     name: "python:3.12-slim"
     dir: "bike-demand"
@@ -78,13 +78,47 @@ steps:
       - "Dockerfile"
       - "."
 
+  # Run the image just built, inside the build, and apply the Lab 5 identity check
+  # to it before it is pushed or deployed. No identity token is needed: the
+  # container is reached directly on the build network. (Cloud Build cannot mint
+  # identity tokens for the private Cloud Run URL with the team's current IAM.)
+  - id: "Start built image"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - "run"
+      - "--detach"
+      - "--name=built-service"
+      - "--network=cloudbuild"
+      - "europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mlops-fri2-teama-bike-demand:$COMMIT_SHA"
+
+  - id: "Verify built image"
+    name: "python:3.12-slim"
+    dir: "bike-demand"
+    entrypoint: "bash"
+    args:
+      - "-ceu"
+      - |
+        for attempt in $$(seq 1 30); do
+          if python3 scripts/verify_deployment.py \
+              --url http://built-service:8000 \
+              --expected-model "$$(cat /workspace/expected-model.txt)" \
+              --expected-model-sha256 "$$(cat /workspace/expected-model-sha256.txt)" \
+              --expected-revision "$COMMIT_SHA"; then
+            exit 0
+          fi
+          sleep 2
+        done
+        echo "Image check failed: nothing is pushed or deployed; traffic stays on the previous revision."
+        exit 1
+
   - id: "Push Docker image"
     name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
       - "europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mlops-fri2-teama-bike-demand:$COMMIT_SHA"
 
-  # New revision with 0% traffic, reachable only through its tag URL.
+  # New revision with 0% traffic. If it cannot start, this step fails and the
+  # previous revision keeps 100% of traffic.
   - id: "Deploy new revision without traffic"
     name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     entrypoint: "gcloud"
@@ -99,47 +133,7 @@ steps:
       - "--tag=c-$SHORT_SHA"
       - "--quiet"
 
-  # The service is private: get identity tokens for the tag URL and for the
-  # service URL (the verifier tries both audiences). Tokens stay in /workspace.
-  - id: "Get identity tokens"
-    name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
-    entrypoint: "bash"
-    args:
-      - "-ceu"
-      - |
-        base=$$(gcloud run services describe mlops-fri2-teama-bike-demand --region=europe-west1 --project=$PROJECT_ID --format="value(status.url)")
-        tag_url="https://c-$SHORT_SHA---$${base#https://}"
-        echo "$$tag_url" > /workspace/tag-url.txt
-        gcloud auth print-identity-token --audiences="$$tag_url" > /workspace/token-tag.txt
-        gcloud auth print-identity-token --audiences="$$base" > /workspace/token-service.txt
-        echo "Checking $$tag_url"
-
-  # The Lab 5 identity check against the NEW revision, before it gets traffic.
-  - id: "Verify new revision"
-    name: "python:3.12-slim"
-    dir: "bike-demand"
-    entrypoint: "bash"
-    args:
-      - "-ceu"
-      - |
-        check() {
-          BIKE_DEMAND_ID_TOKEN=$$(cat "$$1") python3 scripts/verify_deployment.py \
-            --url "$$(cat /workspace/tag-url.txt)" \
-            --expected-model "$$(cat /workspace/expected-model.txt)" \
-            --expected-model-sha256 "$$(cat /workspace/expected-model-sha256.txt)" \
-            --expected-revision "$COMMIT_SHA"
-        }
-        for attempt in 1 2 3 4 5 6; do
-          if check /workspace/token-tag.txt || check /workspace/token-service.txt; then
-            exit 0
-          fi
-          echo "Attempt $$attempt failed; retrying in 10 s"
-          sleep 10
-        done
-        echo "Live check failed: traffic stays on the previous revision."
-        exit 1
-
-  # Only reached when the live check passed.
+  # Only reached when the image check passed and the revision started.
   - id: "Route traffic to verified revision"
     name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     entrypoint: "gcloud"
