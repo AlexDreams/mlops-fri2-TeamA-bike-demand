@@ -840,7 +840,47 @@ All rules must pass for a candidate to be eligible. Missing or invalid evidence 
 
 ### Failure and decisions (Alban)
 
-<!-- three claims, invalid, missing, reject, blocked, status -->
+*Gate code by Alban (PR #43); answers below written by Alexandre because Alban was unavailable.*
+
+**three claims: what must the gate defend?**
+
+- **Choice:** three groups of rules, all required.
+  - **Quality:** the candidate is compared with the train-mean baseline and the accepted model on the same validation rows.
+  - **Operation:** bundle size and p95 single-row predict latency (local, warm, 200 calls).
+  - **Integrity:** data snapshot digest, exact candidate and accepted bytes, 4,358 validation rows, finite predictions, clean checkout.
+- **Rejected:** deciding on MAE alone.
+- **Why:** a better score proves nothing if the bytes, rows or data are not the ones we think, or if the model cannot be served.
+
+**invalid: what evidence must never count as pass?**
+
+- **Choice:** policy thresholds must be finite numbers (NaN, booleans and strings are refused when the policy loads); predictions must be finite; a model whose bytes do not match its recorded SHA-256 is never loaded.
+- **Rejected:** comparing whatever values are present.
+- **Why:** `NaN <= x` is silently False and `True` compares as 1, so an invalid value could pass or fail a rule by accident.
+
+**missing: what if a required check did not run?**
+
+- **Choice:** the check is recorded as `missing` and the outcome is `blocked`; quality scores are not even computed.
+- **Rejected:** skipping the check and deciding on the rest.
+- **Why:** unavailable evidence is not passed evidence.
+
+**reject: which measured rule failed?**
+
+- **Choice:** the decision record in `bike-demand/decisions/` lists every failed rule with its observed and expected values, for example `quality.improves_on_accepted: fail (observed ..., expected <= accepted ... - 2.0)`.
+- **Rejected:** a single pass/fail flag.
+- **Why:** a reviewer must be able to see why, without rerunning anything.
+
+**blocked: what must be repaired before deciding?**
+
+- **Choice:** repair the evidence (fetch the accepted bundle, commit local changes, restore the data snapshot), then rerun. A blocked run is never reinterpreted as a pass or a reject.
+- **Rejected:** retrying until it passes.
+- **Why:** blocked means "we could not decide", which is different from "the candidate is worse".
+- **Observed:** in the review challenge of PR #43, one byte appended to the accepted model gave `blocked`, exit 2, `integrity.incumbent_bytes: fail`, and no score was computed.
+
+**status: how does CI observe the outcome?**
+
+- **Choice:** exit code `0` eligible, `1` rejected, `2` blocked, `3` failed before a decision; the JSON decision record is committed.
+- **Rejected:** printing the outcome only.
+- **Why:** a script or CI job can act on the exit code, and the committed record keeps the reasons.
 
 ### Accepted state and recovery (Alexandre)
 
