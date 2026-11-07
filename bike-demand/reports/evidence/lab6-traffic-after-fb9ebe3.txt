@@ -1,0 +1,9 @@
+﻿status:
+  traffic:
+  - revisionName: mlops-fri2-teama-bike-demand-00020-jeg
+    tag: c-ba57c3a
+    url: https://c-ba57c3a---mlops-fri2-teama-bike-demand-7md3wlybfq-ew.a.run.app
+  - percent: 100
+    revisionName: mlops-fri2-teama-bike-demand-00021-rih
+    tag: c-fb9ebe3
+    url: https://c-fb9ebe3---mlops-fri2-teama-bike-demand-7md3wlybfq-ew.a.run.app

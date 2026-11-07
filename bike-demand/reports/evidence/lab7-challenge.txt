@@ -1,0 +1,15 @@
+﻿{
+  "decision": "C:/Users/super/AppData/Local/Temp/lab7-challenge/decisions/20261107T115458Z-shallow-34b368.json",
+  "outcome": "blocked",
+  "candidate": "rf-70fbb515c38b",
+  "incumbent": "baseline-f01a22df4c39",
+  "evaluation": {
+    "window": "validation 2012-01-01..2012-06-30",
+    "metric": "MAE, bikes per hour",
+    "rows": 4358
+  },
+  "reasons": [
+    "integrity.incumbent_bytes: fail (observed a95f091dc97adaa9f54a92d393eba14fa052414d6ea5739f1dfae0ea86322918, expected fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304)"
+  ]
+}
+exit=2

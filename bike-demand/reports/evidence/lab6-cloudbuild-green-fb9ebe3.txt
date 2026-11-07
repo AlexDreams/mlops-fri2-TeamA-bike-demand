@@ -1,0 +1,972 @@
+﻿--------------------------- REMOTE BUILD OUTPUT ----------------------------
+starting build "43a31e20-6f3d-4ac0-b4e0-c531b8687224" using release legacy
+FETCHSOURCE
+From https://github.com/AlexDreams/mlops-fri2-TeamA-bike-demand
+ * branch            fb9ebe330a4312c6e63a2e7be6f4b2d4f59cc500 -> FETCH_HEAD
+HEAD is now at fb9ebe3 Merge pull request #46 from AlexDreams/alexandre-dev
+GitCommit:
+fb9ebe330a4312c6e63a2e7be6f4b2d4f59cc500
+BUILD
+Starting Step #0 - "Read accepted pointer"
+Step #0 - "Read accepted pointer": Pulling image: python:3.12-slim
+Step #0 - "Read accepted pointer": 3.12-slim: Pulling from library/python
+Step #0 - "Read accepted pointer": 37fb86c2a767: Pulling fs layer
+Step #0 - "Read accepted pointer": 68bced9e0afa: Pulling fs layer
+Step #0 - "Read accepted pointer": 2dc99d2d0a39: Pulling fs layer
+Step #0 - "Read accepted pointer": 05e0eee5572e: Pulling fs layer
+Step #0 - "Read accepted pointer": 05e0eee5572e: Verifying Checksum
+Step #0 - "Read accepted pointer": 05e0eee5572e: Download complete
+Step #0 - "Read accepted pointer": 68bced9e0afa: Verifying Checksum
+Step #0 - "Read accepted pointer": 68bced9e0afa: Download complete
+Step #0 - "Read accepted pointer": 2dc99d2d0a39: Download complete
+Step #0 - "Read accepted pointer": 37fb86c2a767: Verifying Checksum
+Step #0 - "Read accepted pointer": 37fb86c2a767: Download complete
+Step #0 - "Read accepted pointer": 37fb86c2a767: Pull complete
+Step #0 - "Read accepted pointer": 68bced9e0afa: Pull complete
+Step #0 - "Read accepted pointer": 2dc99d2d0a39: Pull complete
+Step #0 - "Read accepted pointer": 05e0eee5572e: Pull complete
+Step #0 - "Read accepted pointer": Digest: sha256:4840d514c583a4d3d8cad3940e68dee6f0f6f3635c12fcd0a3d74c21a5b93a54
+Step #0 - "Read accepted pointer": Status: Downloaded newer image for python:3.12-slim
+Step #0 - "Read accepted pointer": docker.io/library/python:3.12-slim
+Step #0 - "Read accepted pointer": Accepted version: baseline-f01a22df4c39 | expected live: baseline-f01a22df4c39
+Finished Step #0 - "Read accepted pointer"
+Starting Step #1 - "Fetch accepted bundle"
+Step #1 - "Fetch accepted bundle": Pulling image: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+Step #1 - "Fetch accepted bundle": slim: Pulling from google.com/cloudsdktool/cloud-sdk
+Step #1 - "Fetch accepted bundle": 6fc242d221a6: Already exists
+Step #1 - "Fetch accepted bundle": db4ac64018ac: Pulling fs layer
+Step #1 - "Fetch accepted bundle": e22a76a4f47c: Pulling fs layer
+Step #1 - "Fetch accepted bundle": 019b58d1ed69: Pulling fs layer
+Step #1 - "Fetch accepted bundle": db4ac64018ac: Download complete
+Step #1 - "Fetch accepted bundle": 019b58d1ed69: Verifying Checksum
+Step #1 - "Fetch accepted bundle": 019b58d1ed69: Download complete
+Step #1 - "Fetch accepted bundle": db4ac64018ac: Pull complete
+Step #1 - "Fetch accepted bundle": e22a76a4f47c: Verifying Checksum
+Step #1 - "Fetch accepted bundle": e22a76a4f47c: Download complete
+Step #1 - "Fetch accepted bundle": e22a76a4f47c: Pull complete
+Step #1 - "Fetch accepted bundle": 019b58d1ed69: Pull complete
+Step #1 - "Fetch accepted bundle": Digest: sha256:08c9cb2c82625689f26172f46f2cefdf30c3449959a71492569a824b537d369f
+Step #1 - "Fetch accepted bundle": Status: Downloaded newer image for gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+Step #1 - "Fetch accepted bundle": gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+Step #1 - "Fetch accepted bundle": Copying gs://mlops-fri2-teama-bike-demand-models/bundles/baseline-f01a22df4c39/model.joblib to file://artifacts/model.joblib
+Step #1 - "Fetch accepted bundle": Copying gs://mlops-fri2-teama-bike-demand-models/bundles/baseline-f01a22df4c39/model-metadata.json to file://artifacts/model-metadata.json
+Step #1 - "Fetch accepted bundle":
+Step #1 - "Fetch accepted bundle": ..........
+Step #1 - "Fetch accepted bundle":
+Step #1 - "Fetch accepted bundle": Average throughput: 4.2MiB/s
+Step #1 - "Fetch accepted bundle": artifacts/model.joblib: OK
+Step #1 - "Fetch accepted bundle": artifacts/model-metadata.json: OK
+Finished Step #1 - "Fetch accepted bundle"
+Starting Step #2 - "Run blocking checks"
+Step #2 - "Run blocking checks": Already have image (with digest): python:3.12-slim
+Step #2 - "Run blocking checks": Selecting previously unselected package libexpat1:amd64.
+Step #2 - "Run blocking checks": (Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 5658 files and directories currently installed.)
+Step #2 - "Run blocking checks": Preparing to unpack .../00-libexpat1_2.9.0-1~deb13u1_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libexpat1:amd64 (2.9.0-1~deb13u1) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package perl-modules-5.40.
+Step #2 - "Run blocking checks": Preparing to unpack .../01-perl-modules-5.40_5.40.1-6+deb13u1_all.deb ...
+Step #2 - "Run blocking checks": Unpacking perl-modules-5.40 (5.40.1-6+deb13u1) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libgdbm-compat4t64:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../02-libgdbm-compat4t64_1.24-2_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libgdbm-compat4t64:amd64 (1.24-2) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libperl5.40:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../03-libperl5.40_5.40.1-6+deb13u1_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libperl5.40:amd64 (5.40.1-6+deb13u1) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package perl.
+Step #2 - "Run blocking checks": Preparing to unpack .../04-perl_5.40.1-6+deb13u1_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking perl (5.40.1-6+deb13u1) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libbrotli1:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../05-libbrotli1_1.1.0-2+deb13u1_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libbrotli1:amd64 (1.1.0-2+deb13u1) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libunistring5:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../06-libunistring5_1.3-2_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libunistring5:amd64 (1.3-2) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libidn2-0:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../07-libidn2-0_2.3.8-2_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libidn2-0:amd64 (2.3.8-2) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libp11-kit0:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../08-libp11-kit0_0.25.5-3_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libp11-kit0:amd64 (0.25.5-3) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libtasn1-6:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../09-libtasn1-6_4.20.0-2+deb13u1_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libtasn1-6:amd64 (4.20.0-2+deb13u1) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libgnutls30t64:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../10-libgnutls30t64_3.8.9-3+deb13u4_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libgnutls30t64:amd64 (3.8.9-3+deb13u4) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libkrb5support0:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../11-libkrb5support0_1.21.3-5+deb13u1_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libkrb5support0:amd64 (1.21.3-5+deb13u1) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libcom-err2:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../12-libcom-err2_1.47.2-3+b12_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libcom-err2:amd64 (1.47.2-3+b12) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libk5crypto3:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../13-libk5crypto3_1.21.3-5+deb13u1_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libk5crypto3:amd64 (1.21.3-5+deb13u1) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libkeyutils1:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../14-libkeyutils1_1.6.3-6_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libkeyutils1:amd64 (1.6.3-6) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libkrb5-3:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../15-libkrb5-3_1.21.3-5+deb13u1_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libkrb5-3:amd64 (1.21.3-5+deb13u1) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libgssapi-krb5-2:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../16-libgssapi-krb5-2_1.21.3-5+deb13u1_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libgssapi-krb5-2:amd64 (1.21.3-5+deb13u1) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libsasl2-modules-db:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../17-libsasl2-modules-db_2.1.28+dfsg1-9_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libsasl2-modules-db:amd64 (2.1.28+dfsg1-9) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libsasl2-2:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../18-libsasl2-2_2.1.28+dfsg1-9_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libsasl2-2:amd64 (2.1.28+dfsg1-9) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libldap2:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../19-libldap2_2.6.10+dfsg-1_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libldap2:amd64 (2.6.10+dfsg-1) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libnghttp2-14:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../20-libnghttp2-14_1.64.0-1.1+deb13u1_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libnghttp2-14:amd64 (1.64.0-1.1+deb13u1) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libnghttp3-9:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../21-libnghttp3-9_1.8.0-1_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libnghttp3-9:amd64 (1.8.0-1) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libngtcp2-16:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../22-libngtcp2-16_1.11.0-1+deb13u1_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libngtcp2-16:amd64 (1.11.0-1+deb13u1) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libngtcp2-crypto-gnutls8:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../23-libngtcp2-crypto-gnutls8_1.11.0-1+deb13u1_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libngtcp2-crypto-gnutls8:amd64 (1.11.0-1+deb13u1) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libpsl5t64:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../24-libpsl5t64_0.21.2-1.1+b1_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libpsl5t64:amd64 (0.21.2-1.1+b1) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package librtmp1:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../25-librtmp1_2.4+20151223.gitfa8646d.1-2+b5_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2+b5) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libssh2-1t64:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../26-libssh2-1t64_1.11.1-1+deb13u2_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libssh2-1t64:amd64 (1.11.1-1+deb13u2) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package libcurl3t64-gnutls:amd64.
+Step #2 - "Run blocking checks": Preparing to unpack .../27-libcurl3t64-gnutls_8.14.1-2+deb13u7_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking libcurl3t64-gnutls:amd64 (8.14.1-2+deb13u7) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package liberror-perl.
+Step #2 - "Run blocking checks": Preparing to unpack .../28-liberror-perl_0.17030-1_all.deb ...
+Step #2 - "Run blocking checks": Unpacking liberror-perl (0.17030-1) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package git-man.
+Step #2 - "Run blocking checks": Preparing to unpack .../29-git-man_1%3a2.47.3-0+deb13u1_all.deb ...
+Step #2 - "Run blocking checks": Unpacking git-man (1:2.47.3-0+deb13u1) ...
+Step #2 - "Run blocking checks": Selecting previously unselected package git.
+Step #2 - "Run blocking checks": Preparing to unpack .../30-git_1%3a2.47.3-0+deb13u1_amd64.deb ...
+Step #2 - "Run blocking checks": Unpacking git (1:2.47.3-0+deb13u1) ...
+Step #2 - "Run blocking checks": Setting up libexpat1:amd64 (2.9.0-1~deb13u1) ...
+Step #2 - "Run blocking checks": Setting up libkeyutils1:amd64 (1.6.3-6) ...
+Step #2 - "Run blocking checks": Setting up libgdbm-compat4t64:amd64 (1.24-2) ...
+Step #2 - "Run blocking checks": Setting up libbrotli1:amd64 (1.1.0-2+deb13u1) ...
+Step #2 - "Run blocking checks": Setting up libnghttp2-14:amd64 (1.64.0-1.1+deb13u1) ...
+Step #2 - "Run blocking checks": Setting up libcom-err2:amd64 (1.47.2-3+b12) ...
+Step #2 - "Run blocking checks": Setting up libkrb5support0:amd64 (1.21.3-5+deb13u1) ...
+Step #2 - "Run blocking checks": Setting up libsasl2-modules-db:amd64 (2.1.28+dfsg1-9) ...
+Step #2 - "Run blocking checks": Setting up libp11-kit0:amd64 (0.25.5-3) ...
+Step #2 - "Run blocking checks": Setting up libunistring5:amd64 (1.3-2) ...
+Step #2 - "Run blocking checks": Setting up libk5crypto3:amd64 (1.21.3-5+deb13u1) ...
+Step #2 - "Run blocking checks": Setting up libsasl2-2:amd64 (2.1.28+dfsg1-9) ...
+Step #2 - "Run blocking checks": Setting up libnghttp3-9:amd64 (1.8.0-1) ...
+Step #2 - "Run blocking checks": Setting up perl-modules-5.40 (5.40.1-6+deb13u1) ...
+Step #2 - "Run blocking checks": Setting up libtasn1-6:amd64 (4.20.0-2+deb13u1) ...
+Step #2 - "Run blocking checks": Setting up git-man (1:2.47.3-0+deb13u1) ...
+Step #2 - "Run blocking checks": Setting up libngtcp2-16:amd64 (1.11.0-1+deb13u1) ...
+Step #2 - "Run blocking checks": Setting up libkrb5-3:amd64 (1.21.3-5+deb13u1) ...
+Step #2 - "Run blocking checks": Setting up libssh2-1t64:amd64 (1.11.1-1+deb13u2) ...
+Step #2 - "Run blocking checks": Setting up libldap2:amd64 (2.6.10+dfsg-1) ...
+Step #2 - "Run blocking checks": Setting up libidn2-0:amd64 (2.3.8-2) ...
+Step #2 - "Run blocking checks": Setting up libperl5.40:amd64 (5.40.1-6+deb13u1) ...
+Step #2 - "Run blocking checks": Setting up perl (5.40.1-6+deb13u1) ...
+Step #2 - "Run blocking checks": Setting up libgssapi-krb5-2:amd64 (1.21.3-5+deb13u1) ...
+Step #2 - "Run blocking checks": Setting up libgnutls30t64:amd64 (3.8.9-3+deb13u4) ...
+Step #2 - "Run blocking checks": Setting up libpsl5t64:amd64 (0.21.2-1.1+b1) ...
+Step #2 - "Run blocking checks": Setting up liberror-perl (0.17030-1) ...
+Step #2 - "Run blocking checks": Setting up librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2+b5) ...
+Step #2 - "Run blocking checks": Setting up libngtcp2-crypto-gnutls8:amd64 (1.11.0-1+deb13u1) ...
+Step #2 - "Run blocking checks": Setting up libcurl3t64-gnutls:amd64 (8.14.1-2+deb13u7) ...
+Step #2 - "Run blocking checks": Setting up git (1:2.47.3-0+deb13u1) ...
+Step #2 - "Run blocking checks": Processing triggers for libc-bin (2.41-12+deb13u4) ...
+Step #2 - "Run blocking checks": Collecting uv==0.12.23
+Step #2 - "Run blocking checks":   Downloading uv-0.12.23-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
+Step #2 - "Run blocking checks": Downloading uv-0.12.23-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (20.6 MB)
+Step #2 - "Run blocking checks":    ???????????????????????????????????????? 20.6/20.6 MB 252.7 MB/s eta 0:00:00
+Step #2 - "Run blocking checks": Installing collected packages: uv
+Step #2 - "Run blocking checks": Successfully installed uv-0.12.23
+Step #2 - "Run blocking checks": WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+Step #2 - "Run blocking checks":
+Step #2 - "Run blocking checks": [notice] A new release of pip is available: 25.0.1 -> 26.3
+Step #2 - "Run blocking checks": [notice] To update, run: pip install --upgrade pip
+Step #2 - "Run blocking checks": Using CPython 3.12.16 interpreter at: /usr/local/bin/python3.12
+Step #2 - "Run blocking checks": Creating virtual environment at: .venv
+Step #2 - "Run blocking checks": Resolved 102 packages in 1ms
+Step #2 - "Run blocking checks":    Building bike-demand @ file:///workspace/bike-demand
+Step #2 - "Run blocking checks":       Built bike-demand @ file:///workspace/bike-demand
+Step #2 - "Run blocking checks": Downloading numpy (15.9MiB)
+Step #2 - "Run blocking checks": Downloading pyarrow (47.8MiB)
+Step #2 - "Run blocking checks": Downloading pygments (1.2MiB)
+Step #2 - "Run blocking checks": Downloading ruff (10.7MiB)
+Step #2 - "Run blocking checks": Downloading pandas (11.8MiB)
+Step #2 - "Run blocking checks": Downloading pydantic-core (2.0MiB)
+Step #2 - "Run blocking checks": Downloading cryptography (4.5MiB)
+Step #2 - "Run blocking checks": Downloading scikit-learn (8.7MiB)
+Step #2 - "Run blocking checks": Downloading matplotlib (9.4MiB)
+Step #2 - "Run blocking checks": Downloading mlflow-tracing (1.9MiB)
+Step #2 - "Run blocking checks": Downloading fonttools (5.1MiB)
+Step #2 - "Run blocking checks": Downloading mlflow-skinny (3.9MiB)
+Step #2 - "Run blocking checks": Downloading aiohttp (1.8MiB)
+Step #2 - "Run blocking checks": Downloading scipy (33.7MiB)
+Step #2 - "Run blocking checks": Downloading kiwisolver (1.4MiB)
+Step #2 - "Run blocking checks": Downloading pillow (6.6MiB)
+Step #2 - "Run blocking checks": Downloading mlflow (11.4MiB)
+Step #2 - "Run blocking checks": Downloading databricks-sdk (1.0MiB)
+Step #2 - "Run blocking checks": Downloading sqlalchemy (4.5MiB)
+Step #2 - "Run blocking checks":  Downloaded databricks-sdk
+Step #2 - "Run blocking checks":  Downloaded pygments
+Step #2 - "Run blocking checks":  Downloaded kiwisolver
+Step #2 - "Run blocking checks":  Downloaded aiohttp
+Step #2 - "Run blocking checks":  Downloaded mlflow-tracing
+Step #2 - "Run blocking checks":  Downloaded pydantic-core
+Step #2 - "Run blocking checks":  Downloaded mlflow-skinny
+Step #2 - "Run blocking checks":  Downloaded cryptography
+Step #2 - "Run blocking checks":  Downloaded sqlalchemy
+Step #2 - "Run blocking checks":  Downloaded fonttools
+Step #2 - "Run blocking checks":  Downloaded pillow
+Step #2 - "Run blocking checks":  Downloaded scikit-learn
+Step #2 - "Run blocking checks":  Downloaded matplotlib
+Step #2 - "Run blocking checks":  Downloaded ruff
+Step #2 - "Run blocking checks":  Downloaded mlflow
+Step #2 - "Run blocking checks":  Downloaded pandas
+Step #2 - "Run blocking checks":  Downloaded numpy
+Step #2 - "Run blocking checks":  Downloaded scipy
+Step #2 - "Run blocking checks":  Downloaded pyarrow
+Step #2 - "Run blocking checks": Prepared 98 packages in 4.84s
+Step #2 - "Run blocking checks": warning: Failed to hardlink files; falling back to full copy. This may lead to degraded performance.
+Step #2 - "Run blocking checks":          If the cache and target directories are on different filesystems, hardlinking may not be supported.
+Step #2 - "Run blocking checks":          If this is intentional, set `export UV_LINK_MODE=copy` or use `--link-mode=copy` to suppress this warning.
+Step #2 - "Run blocking checks": Installed 98 packages in 4.36s
+Step #2 - "Run blocking checks":  + aiohappyeyeballs==2.7.1
+Step #2 - "Run blocking checks":  + aiohttp==3.14.4
+Step #2 - "Run blocking checks":  + aiosignal==1.4.0
+Step #2 - "Run blocking checks":  + alembic==1.20.0
+Step #2 - "Run blocking checks":  + annotated-doc==0.0.5
+Step #2 - "Run blocking checks":  + annotated-types==0.8.0
+Step #2 - "Run blocking checks":  + anyio==4.15.1
+Step #2 - "Run blocking checks":  + attrs==26.1.0
+Step #2 - "Run blocking checks":  + bike-demand==0.1.0 (from file:///workspace/bike-demand)
+Step #2 - "Run blocking checks":  + blinker==1.9.0
+Step #2 - "Run blocking checks":  + cachetools==7.2.1
+Step #2 - "Run blocking checks":  + certifi==2026.7.22
+Step #2 - "Run blocking checks":  + cffi==2.1.1
+Step #2 - "Run blocking checks":  + charset-normalizer==3.5.2
+Step #2 - "Run blocking checks":  + click==8.5.0
+Step #2 - "Run blocking checks":  + cloudpickle==3.1.2
+Step #2 - "Run blocking checks":  + contourpy==1.4.0
+Step #2 - "Run blocking checks":  + cryptography==50.0.2
+Step #2 - "Run blocking checks":  + cycler==0.12.1
+Step #2 - "Run blocking checks":  + databricks-sdk==0.148.0
+Step #2 - "Run blocking checks":  + docker==7.2.0
+Step #2 - "Run blocking checks":  + fastapi==0.142.2
+Step #2 - "Run blocking checks":  + flask==3.1.3
+Step #2 - "Run blocking checks":  + flask-cors==6.0.5
+Step #2 - "Run blocking checks":  + fonttools==4.66.1
+Step #2 - "Run blocking checks":  + frozenlist==1.8.0
+Step #2 - "Run blocking checks":  + gitdb==4.0.12
+Step #2 - "Run blocking checks":  + gitpython==3.2.0
+Step #2 - "Run blocking checks":  + google-auth==2.60.0
+Step #2 - "Run blocking checks":  + graphene==3.4.3
+Step #2 - "Run blocking checks":  + graphql-core==3.2.13
+Step #2 - "Run blocking checks":  + graphql-relay==3.2.0
+Step #2 - "Run blocking checks":  + gunicorn==26.2.0
+Step #2 - "Run blocking checks":  + h11==0.16.0
+Step #2 - "Run blocking checks":  + httpcore2==2.13.1
+Step #2 - "Run blocking checks":  + httpx2==2.13.1
+Step #2 - "Run blocking checks":  + huey==3.4.0
+Step #2 - "Run blocking checks":  + idna==3.20
+Step #2 - "Run blocking checks":  + importlib-metadata==9.0.1
+Step #2 - "Run blocking checks":  + iniconfig==2.3.1
+Step #2 - "Run blocking checks":  + itsdangerous==2.2.0
+Step #2 - "Run blocking checks":  + jinja2==3.1.6
+Step #2 - "Run blocking checks":  + joblib==1.6.0
+Step #2 - "Run blocking checks":  + kiwisolver==1.5.1
+Step #2 - "Run blocking checks":  + mako==1.4.3
+Step #2 - "Run blocking checks":  + markupsafe==3.0.4
+Step #2 - "Run blocking checks":  + matplotlib==3.11.2
+Step #2 - "Run blocking checks":  + mlflow==3.17.0
+Step #2 - "Run blocking checks":  + mlflow-skinny==3.17.0
+Step #2 - "Run blocking checks":  + mlflow-tracing==3.17.0
+Step #2 - "Run blocking checks":  + multidict==6.9.1
+Step #2 - "Run blocking checks":  + narwhals==2.26.0
+Step #2 - "Run blocking checks":  + numpy==2.5.3
+Step #2 - "Run blocking checks":  + opentelemetry-api==1.45.1
+Step #2 - "Run blocking checks":  + opentelemetry-proto==1.45.1
+Step #2 - "Run blocking checks":  + opentelemetry-sdk==1.45.1
+Step #2 - "Run blocking checks":  + opentelemetry-semantic-conventions==0.66b1
+Step #2 - "Run blocking checks":  + packaging==26.3
+Step #2 - "Run blocking checks":  + pandas==2.3.3
+Step #2 - "Run blocking checks":  + pillow==12.3.0
+Step #2 - "Run blocking checks":  + pluggy==1.6.0
+Step #2 - "Run blocking checks":  + prettytable==3.18.0
+Step #2 - "Run blocking checks":  + propcache==0.5.4
+Step #2 - "Run blocking checks":  + protobuf==6.33.6
+Step #2 - "Run blocking checks":  + pyarrow==25.0.1
+Step #2 - "Run blocking checks":  + pyasn1==0.6.4
+Step #2 - "Run blocking checks":  + pyasn1-modules==0.4.2
+Step #2 - "Run blocking checks":  + pycparser==3.0
+Step #2 - "Run blocking checks":  + pydantic==2.13.5
+Step #2 - "Run blocking checks":  + pydantic-core==2.46.5
+Step #2 - "Run blocking checks":  + pygments==2.21.0
+Step #2 - "Run blocking checks":  + pyparsing==3.3.3
+Step #2 - "Run blocking checks":  + pytest==9.1.1
+Step #2 - "Run blocking checks":  + python-dateutil==2.9.0.post0
+Step #2 - "Run blocking checks":  + python-dotenv==1.2.4
+Step #2 - "Run blocking checks":  + pytz==2026.5
+Step #2 - "Run blocking checks":  + pyyaml==6.0.3
+Step #2 - "Run blocking checks":  + requests==2.34.2
+Step #2 - "Run blocking checks":  + ruff==0.15.7
+Step #2 - "Run blocking checks":  + scikit-learn==1.9.1
+Step #2 - "Run blocking checks":  + scipy==1.18.1
+Step #2 - "Run blocking checks":  + six==1.17.0
+Step #2 - "Run blocking checks":  + skops==0.16.0
+Step #2 - "Run blocking checks":  + smmap==5.0.3
+Step #2 - "Run blocking checks":  + sqlalchemy==2.1.3
+Step #2 - "Run blocking checks":  + sqlparse==0.6.0
+Step #2 - "Run blocking checks":  + starlette==1.7.0
+Step #2 - "Run blocking checks":  + threadpoolctl==3.7.0
+Step #2 - "Run blocking checks":  + truststore==0.10.5
+Step #2 - "Run blocking checks":  + typing-extensions==4.16.0
+Step #2 - "Run blocking checks":  + typing-inspection==0.4.4
+Step #2 - "Run blocking checks":  + tzdata==2026.5
+Step #2 - "Run blocking checks":  + urllib3==2.8.0
+Step #2 - "Run blocking checks":  + uvicorn==0.54.0
+Step #2 - "Run blocking checks":  + wcwidth==0.9.2
+Step #2 - "Run blocking checks":  + werkzeug==3.1.9
+Step #2 - "Run blocking checks":  + yarl==1.25.1
+Step #2 - "Run blocking checks":  + zipp==4.1.1
+Step #2 - "Run blocking checks": Preflight passed: imports, frozen snapshot and writable outputs.
+Step #2 - "Run blocking checks": This does not complete exercises, verify GitHub CI, or certify other OSes.
+Step #2 - "Run blocking checks": All checks passed!
+Step #2 - "Run blocking checks": 27 files already formatted
+Step #2 - "Run blocking checks": ........................................................................ [ 66%]
+Step #2 - "Run blocking checks": ....................................                                     [100%]
+Step #2 - "Run blocking checks": =============================== warnings summary ===============================
+Step #2 - "Run blocking checks": tests/exercise/test_baseline.py::test_saved_model_readback_rerun_and_held_test
+Step #2 - "Run blocking checks":   /workspace/bike-demand/.venv/lib/python3.12/site-packages/mlflow/store/tracking/sqlalchemy_store.py:327: SADeprecationWarning: The ``noload`` loader strategy is deprecated and will be removed in a future release.  This option produces incorrect results by returning ``None`` for related items. (deprecated since: 2.1)
+Step #2 - "Run blocking checks":     sqlalchemy.orm.configure_mappers()
+Step #2 - "Run blocking checks":
+Step #2 - "Run blocking checks": -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+Step #2 - "Run blocking checks": 108 passed, 1 warning in 26.46s
+Step #2 - "Run blocking checks": {
+Step #2 - "Run blocking checks":   "platform": "Linux-5.10.0-32-cloud-amd64-x86_64-with-glibc2.41",
+Step #2 - "Run blocking checks":   "python": "3.12.16",
+Step #2 - "Run blocking checks":   "scikit_learn": "1.9.1",
+Step #2 - "Run blocking checks":   "model_version": "baseline-f01a22df4c39",
+Step #2 - "Run blocking checks":   "reference_prediction": "83.56200000000001",
+Step #2 - "Run blocking checks":   "validation_rows": 4358,
+Step #2 - "Run blocking checks":   "validation_predictions_sha256": "c4e42226d0fc78a6cfdb3902527687bf8d7808adc8d5c1ee1f510f29f2452cee"
+Step #2 - "Run blocking checks": }
+Finished Step #2 - "Run blocking checks"
+Starting Step #3 - "Build Docker image"
+Step #3 - "Build Docker image": Already have image (with digest): gcr.io/cloud-builders/docker
+Step #3 - "Build Docker image": Sending build context to Docker daemon  6.956MB
+Step #3 - "Build Docker image": Step 1/21 : FROM python:3.12-slim AS app
+Step #3 - "Build Docker image":  ---> 78976a69c067
+Step #3 - "Build Docker image": Step 2/21 : COPY --from=ghcr.io/astral-sh/uv:0.12.23 /uv /uvx /bin/
+Step #3 - "Build Docker image": 0.12.23: Pulling from astral-sh/uv
+Step #3 - "Build Docker image": f3f7502ac07c: Pulling fs layer
+Step #3 - "Build Docker image": dcd00f4c4684: Pulling fs layer
+Step #3 - "Build Docker image": dcd00f4c4684: Verifying Checksum
+Step #3 - "Build Docker image": dcd00f4c4684: Download complete
+Step #3 - "Build Docker image": f3f7502ac07c: Verifying Checksum
+Step #3 - "Build Docker image": f3f7502ac07c: Download complete
+Step #3 - "Build Docker image": f3f7502ac07c: Pull complete
+Step #3 - "Build Docker image": dcd00f4c4684: Pull complete
+Step #3 - "Build Docker image": Digest: sha256:61d393e44e249f2e4b526b6c7ddcecce245946826e608e11c93ad4f5bba55b21
+Step #3 - "Build Docker image": Status: Downloaded newer image for ghcr.io/astral-sh/uv:0.12.23
+Step #3 - "Build Docker image":  ---> e08012c3e9de
+Step #3 - "Build Docker image": Step 3/21 : RUN apt-get update  && apt-get install -y --no-install-recommends git  && rm -rf /var/lib/apt/lists/*
+Step #3 - "Build Docker image":  ---> Running in 70814165277f
+Step #3 - "Build Docker image": Hit:1 http://deb.debian.org/debian trixie InRelease
+Step #3 - "Build Docker image": Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+Step #3 - "Build Docker image": Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+Step #3 - "Build Docker image": Get:4 http://deb.debian.org/debian trixie/main amd64 Packages [9678 kB]
+Step #3 - "Build Docker image": Get:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages [1108 B]
+Step #3 - "Build Docker image": Get:6 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [299 kB]
+Step #3 - "Build Docker image": Fetched 10.1 MB in 1s (8090 kB/s)
+Step #3 - "Build Docker image": Reading package lists...
+Step #3 - "Build Docker image": Reading package lists...
+Step #3 - "Build Docker image": Building dependency tree...
+Step #3 - "Build Docker image": Reading state information...
+Step #3 - "Build Docker image": The following additional packages will be installed:
+Step #3 - "Build Docker image":   git-man libbrotli1 libcom-err2 libcurl3t64-gnutls liberror-perl libexpat1
+Step #3 - "Build Docker image":   libgdbm-compat4t64 libgnutls30t64 libgssapi-krb5-2 libidn2-0 libk5crypto3
+Step #3 - "Build Docker image":   libkeyutils1 libkrb5-3 libkrb5support0 libldap2 libnghttp2-14 libnghttp3-9
+Step #3 - "Build Docker image":   libngtcp2-16 libngtcp2-crypto-gnutls8 libp11-kit0 libperl5.40 libpsl5t64
+Step #3 - "Build Docker image":   librtmp1 libsasl2-2 libsasl2-modules-db libssh2-1t64 libtasn1-6
+Step #3 - "Build Docker image":   libunistring5 perl perl-modules-5.40
+Step #3 - "Build Docker image": Suggested packages:
+Step #3 - "Build Docker image":   gettext-base git-doc git-email git-gui gitk gitweb git-cvs git-mediawiki
+Step #3 - "Build Docker image":   git-svn gnutls-bin krb5-doc krb5-user sensible-utils perl-doc
+Step #3 - "Build Docker image":   libterm-readline-gnu-perl | libterm-readline-perl-perl make
+Step #3 - "Build Docker image":   libtap-harness-archive-perl
+Step #3 - "Build Docker image": Recommended packages:
+Step #3 - "Build Docker image":   patch less ssh-client krb5-locales libldap-common publicsuffix
+Step #3 - "Build Docker image":   libsasl2-modules
+Step #3 - "Build Docker image": The following NEW packages will be installed:
+Step #3 - "Build Docker image":   git git-man libbrotli1 libcom-err2 libcurl3t64-gnutls liberror-perl
+Step #3 - "Build Docker image":   libexpat1 libgdbm-compat4t64 libgnutls30t64 libgssapi-krb5-2 libidn2-0
+Step #3 - "Build Docker image":   libk5crypto3 libkeyutils1 libkrb5-3 libkrb5support0 libldap2 libnghttp2-14
+Step #3 - "Build Docker image":   libnghttp3-9 libngtcp2-16 libngtcp2-crypto-gnutls8 libp11-kit0 libperl5.40
+Step #3 - "Build Docker image":   libpsl5t64 librtmp1 libsasl2-2 libsasl2-modules-db libssh2-1t64 libtasn1-6
+Step #3 - "Build Docker image":   libunistring5 perl perl-modules-5.40
+Step #3 - "Build Docker image": 0 upgraded, 31 newly installed, 0 to remove and 1 not upgraded.
+Step #3 - "Build Docker image": Need to get 23.6 MB of archives.
+Step #3 - "Build Docker image": After this operation, 119 MB of additional disk space will be used.
+Step #3 - "Build Docker image": Get:1 http://deb.debian.org/debian-security trixie-security/main amd64 libexpat1 amd64 2.9.0-1~deb13u1 [126 kB]
+Step #3 - "Build Docker image": Get:2 http://deb.debian.org/debian trixie/main amd64 perl-modules-5.40 all 5.40.1-6+deb13u1 [3014 kB]
+Step #3 - "Build Docker image": Get:3 http://deb.debian.org/debian trixie/main amd64 libgdbm-compat4t64 amd64 1.24-2 [50.3 kB]
+Step #3 - "Build Docker image": Get:4 http://deb.debian.org/debian trixie/main amd64 libperl5.40 amd64 5.40.1-6+deb13u1 [4326 kB]
+Step #3 - "Build Docker image": Get:5 http://deb.debian.org/debian trixie/main amd64 perl amd64 5.40.1-6+deb13u1 [268 kB]
+Step #3 - "Build Docker image": Get:6 http://deb.debian.org/debian-security trixie-security/main amd64 libbrotli1 amd64 1.1.0-2+deb13u1 [304 kB]
+Step #3 - "Build Docker image": Get:7 http://deb.debian.org/debian trixie/main amd64 libunistring5 amd64 1.3-2 [477 kB]
+Step #3 - "Build Docker image": Get:8 http://deb.debian.org/debian trixie/main amd64 libidn2-0 amd64 2.3.8-2 [109 kB]
+Step #3 - "Build Docker image": Get:9 http://deb.debian.org/debian trixie/main amd64 libp11-kit0 amd64 0.25.5-3 [425 kB]
+Step #3 - "Build Docker image": Get:10 http://deb.debian.org/debian trixie/main amd64 libtasn1-6 amd64 4.20.0-2+deb13u1 [50.1 kB]
+Step #3 - "Build Docker image": Get:11 http://deb.debian.org/debian trixie/main amd64 libgnutls30t64 amd64 3.8.9-3+deb13u4 [1469 kB]
+Step #3 - "Build Docker image": Get:12 http://deb.debian.org/debian trixie/main amd64 libkrb5support0 amd64 1.21.3-5+deb13u1 [33.1 kB]
+Step #3 - "Build Docker image": Get:13 http://deb.debian.org/debian trixie/main amd64 libcom-err2 amd64 1.47.2-3+b12 [25.0 kB]
+Step #3 - "Build Docker image": Get:14 http://deb.debian.org/debian trixie/main amd64 libk5crypto3 amd64 1.21.3-5+deb13u1 [81.2 kB]
+Step #3 - "Build Docker image": Get:15 http://deb.debian.org/debian trixie/main amd64 libkeyutils1 amd64 1.6.3-6 [9456 B]
+Step #3 - "Build Docker image": Get:16 http://deb.debian.org/debian trixie/main amd64 libkrb5-3 amd64 1.21.3-5+deb13u1 [326 kB]
+Step #3 - "Build Docker image": Get:17 http://deb.debian.org/debian trixie/main amd64 libgssapi-krb5-2 amd64 1.21.3-5+deb13u1 [138 kB]
+Step #3 - "Build Docker image": Get:18 http://deb.debian.org/debian trixie/main amd64 libsasl2-modules-db amd64 2.1.28+dfsg1-9 [19.8 kB]
+Step #3 - "Build Docker image": Get:19 http://deb.debian.org/debian trixie/main amd64 libsasl2-2 amd64 2.1.28+dfsg1-9 [57.5 kB]
+Step #3 - "Build Docker image": Get:20 http://deb.debian.org/debian trixie/main amd64 libldap2 amd64 2.6.10+dfsg-1 [194 kB]
+Step #3 - "Build Docker image": Get:21 http://deb.debian.org/debian trixie/main amd64 libnghttp2-14 amd64 1.64.0-1.1+deb13u1 [76.2 kB]
+Step #3 - "Build Docker image": Get:22 http://deb.debian.org/debian trixie/main amd64 libnghttp3-9 amd64 1.8.0-1 [67.7 kB]
+Step #3 - "Build Docker image": Get:23 http://deb.debian.org/debian trixie/main amd64 libngtcp2-16 amd64 1.11.0-1+deb13u1 [132 kB]
+Step #3 - "Build Docker image": Get:24 http://deb.debian.org/debian trixie/main amd64 libngtcp2-crypto-gnutls8 amd64 1.11.0-1+deb13u1 [29.5 kB]
+Step #3 - "Build Docker image": Get:25 http://deb.debian.org/debian trixie/main amd64 libpsl5t64 amd64 0.21.2-1.1+b1 [57.2 kB]
+Step #3 - "Build Docker image": Get:26 http://deb.debian.org/debian trixie/main amd64 librtmp1 amd64 2.4+20151223.gitfa8646d.1-2+b5 [58.8 kB]
+Step #3 - "Build Docker image": Get:27 http://deb.debian.org/debian trixie/main amd64 libssh2-1t64 amd64 1.11.1-1+deb13u2 [245 kB]
+Step #3 - "Build Docker image": Get:28 http://deb.debian.org/debian-security trixie-security/main amd64 libcurl3t64-gnutls amd64 8.14.1-2+deb13u7 [385 kB]
+Step #3 - "Build Docker image": Get:29 http://deb.debian.org/debian trixie/main amd64 liberror-perl all 0.17030-1 [26.9 kB]
+Step #3 - "Build Docker image": Get:30 http://deb.debian.org/debian trixie/main amd64 git-man all 1:2.47.3-0+deb13u1 [2205 kB]
+Step #3 - "Build Docker image": Get:31 http://deb.debian.org/debian trixie/main amd64 git amd64 1:2.47.3-0+deb13u1 [8862 kB]
+Step #3 - "Build Docker image": [91mdebconf: unable to initialize frontend: Dialog
+Step #3 - "Build Docker image": debconf: (TERM is not set, so the dialog frontend is not usable.)
+Step #3 - "Build Docker image": debconf: falling back to frontend: Readline
+Step #3 - "Build Docker image": [0m[91mdebconf: unable to initialize frontend: Readline
+Step #3 - "Build Docker image": debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC entries checked: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.40.1 /usr/local/share/perl/5.40.1 /usr/lib/x86_64-linux-gnu/perl5/5.40 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl-base /usr/lib/x86_64-linux-gnu/perl/5.40 /usr/share/perl/5.40 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 8, <STDIN> line 31.)
+Step #3 - "Build Docker image": [0m[91mdebconf: falling back to frontend: Teletype
+Step #3 - "Build Docker image": [0m[91mdebconf: unable to initialize frontend: Teletype
+Step #3 - "Build Docker image": debconf: (This frontend requires a controlling tty.)
+Step #3 - "Build Docker image": debconf: falling back to frontend: Noninteractive
+Step #3 - "Build Docker image": [0mFetched 23.6 MB in 0s (84.2 MB/s)
+Step #3 - "Build Docker image": Selecting previously unselected package libexpat1:amd64.
+Step #3 - "Build Docker image": (Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 5658 files and directories currently installed.)
+Step #3 - "Build Docker image": Preparing to unpack .../00-libexpat1_2.9.0-1~deb13u1_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libexpat1:amd64 (2.9.0-1~deb13u1) ...
+Step #3 - "Build Docker image": Selecting previously unselected package perl-modules-5.40.
+Step #3 - "Build Docker image": Preparing to unpack .../01-perl-modules-5.40_5.40.1-6+deb13u1_all.deb ...
+Step #3 - "Build Docker image": Unpacking perl-modules-5.40 (5.40.1-6+deb13u1) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libgdbm-compat4t64:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../02-libgdbm-compat4t64_1.24-2_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libgdbm-compat4t64:amd64 (1.24-2) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libperl5.40:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../03-libperl5.40_5.40.1-6+deb13u1_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libperl5.40:amd64 (5.40.1-6+deb13u1) ...
+Step #3 - "Build Docker image": Selecting previously unselected package perl.
+Step #3 - "Build Docker image": Preparing to unpack .../04-perl_5.40.1-6+deb13u1_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking perl (5.40.1-6+deb13u1) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libbrotli1:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../05-libbrotli1_1.1.0-2+deb13u1_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libbrotli1:amd64 (1.1.0-2+deb13u1) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libunistring5:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../06-libunistring5_1.3-2_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libunistring5:amd64 (1.3-2) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libidn2-0:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../07-libidn2-0_2.3.8-2_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libidn2-0:amd64 (2.3.8-2) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libp11-kit0:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../08-libp11-kit0_0.25.5-3_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libp11-kit0:amd64 (0.25.5-3) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libtasn1-6:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../09-libtasn1-6_4.20.0-2+deb13u1_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libtasn1-6:amd64 (4.20.0-2+deb13u1) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libgnutls30t64:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../10-libgnutls30t64_3.8.9-3+deb13u4_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libgnutls30t64:amd64 (3.8.9-3+deb13u4) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libkrb5support0:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../11-libkrb5support0_1.21.3-5+deb13u1_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libkrb5support0:amd64 (1.21.3-5+deb13u1) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libcom-err2:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../12-libcom-err2_1.47.2-3+b12_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libcom-err2:amd64 (1.47.2-3+b12) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libk5crypto3:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../13-libk5crypto3_1.21.3-5+deb13u1_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libk5crypto3:amd64 (1.21.3-5+deb13u1) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libkeyutils1:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../14-libkeyutils1_1.6.3-6_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libkeyutils1:amd64 (1.6.3-6) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libkrb5-3:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../15-libkrb5-3_1.21.3-5+deb13u1_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libkrb5-3:amd64 (1.21.3-5+deb13u1) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libgssapi-krb5-2:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../16-libgssapi-krb5-2_1.21.3-5+deb13u1_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libgssapi-krb5-2:amd64 (1.21.3-5+deb13u1) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libsasl2-modules-db:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../17-libsasl2-modules-db_2.1.28+dfsg1-9_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libsasl2-modules-db:amd64 (2.1.28+dfsg1-9) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libsasl2-2:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../18-libsasl2-2_2.1.28+dfsg1-9_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libsasl2-2:amd64 (2.1.28+dfsg1-9) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libldap2:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../19-libldap2_2.6.10+dfsg-1_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libldap2:amd64 (2.6.10+dfsg-1) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libnghttp2-14:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../20-libnghttp2-14_1.64.0-1.1+deb13u1_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libnghttp2-14:amd64 (1.64.0-1.1+deb13u1) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libnghttp3-9:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../21-libnghttp3-9_1.8.0-1_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libnghttp3-9:amd64 (1.8.0-1) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libngtcp2-16:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../22-libngtcp2-16_1.11.0-1+deb13u1_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libngtcp2-16:amd64 (1.11.0-1+deb13u1) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libngtcp2-crypto-gnutls8:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../23-libngtcp2-crypto-gnutls8_1.11.0-1+deb13u1_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libngtcp2-crypto-gnutls8:amd64 (1.11.0-1+deb13u1) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libpsl5t64:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../24-libpsl5t64_0.21.2-1.1+b1_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libpsl5t64:amd64 (0.21.2-1.1+b1) ...
+Step #3 - "Build Docker image": Selecting previously unselected package librtmp1:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../25-librtmp1_2.4+20151223.gitfa8646d.1-2+b5_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2+b5) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libssh2-1t64:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../26-libssh2-1t64_1.11.1-1+deb13u2_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libssh2-1t64:amd64 (1.11.1-1+deb13u2) ...
+Step #3 - "Build Docker image": Selecting previously unselected package libcurl3t64-gnutls:amd64.
+Step #3 - "Build Docker image": Preparing to unpack .../27-libcurl3t64-gnutls_8.14.1-2+deb13u7_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking libcurl3t64-gnutls:amd64 (8.14.1-2+deb13u7) ...
+Step #3 - "Build Docker image": Selecting previously unselected package liberror-perl.
+Step #3 - "Build Docker image": Preparing to unpack .../28-liberror-perl_0.17030-1_all.deb ...
+Step #3 - "Build Docker image": Unpacking liberror-perl (0.17030-1) ...
+Step #3 - "Build Docker image": Selecting previously unselected package git-man.
+Step #3 - "Build Docker image": Preparing to unpack .../29-git-man_1%3a2.47.3-0+deb13u1_all.deb ...
+Step #3 - "Build Docker image": Unpacking git-man (1:2.47.3-0+deb13u1) ...
+Step #3 - "Build Docker image": Selecting previously unselected package git.
+Step #3 - "Build Docker image": Preparing to unpack .../30-git_1%3a2.47.3-0+deb13u1_amd64.deb ...
+Step #3 - "Build Docker image": Unpacking git (1:2.47.3-0+deb13u1) ...
+Step #3 - "Build Docker image": Setting up libexpat1:amd64 (2.9.0-1~deb13u1) ...
+Step #3 - "Build Docker image": Setting up libkeyutils1:amd64 (1.6.3-6) ...
+Step #3 - "Build Docker image": Setting up libgdbm-compat4t64:amd64 (1.24-2) ...
+Step #3 - "Build Docker image": Setting up libbrotli1:amd64 (1.1.0-2+deb13u1) ...
+Step #3 - "Build Docker image": Setting up libnghttp2-14:amd64 (1.64.0-1.1+deb13u1) ...
+Step #3 - "Build Docker image": Setting up libcom-err2:amd64 (1.47.2-3+b12) ...
+Step #3 - "Build Docker image": Setting up libkrb5support0:amd64 (1.21.3-5+deb13u1) ...
+Step #3 - "Build Docker image": Setting up libsasl2-modules-db:amd64 (2.1.28+dfsg1-9) ...
+Step #3 - "Build Docker image": Setting up libp11-kit0:amd64 (0.25.5-3) ...
+Step #3 - "Build Docker image": Setting up libunistring5:amd64 (1.3-2) ...
+Step #3 - "Build Docker image": Setting up libk5crypto3:amd64 (1.21.3-5+deb13u1) ...
+Step #3 - "Build Docker image": Setting up libsasl2-2:amd64 (2.1.28+dfsg1-9) ...
+Step #3 - "Build Docker image": Setting up libnghttp3-9:amd64 (1.8.0-1) ...
+Step #3 - "Build Docker image": Setting up perl-modules-5.40 (5.40.1-6+deb13u1) ...
+Step #3 - "Build Docker image": Setting up libtasn1-6:amd64 (4.20.0-2+deb13u1) ...
+Step #3 - "Build Docker image": Setting up git-man (1:2.47.3-0+deb13u1) ...
+Step #3 - "Build Docker image": Setting up libngtcp2-16:amd64 (1.11.0-1+deb13u1) ...
+Step #3 - "Build Docker image": Setting up libkrb5-3:amd64 (1.21.3-5+deb13u1) ...
+Step #3 - "Build Docker image": Setting up libssh2-1t64:amd64 (1.11.1-1+deb13u2) ...
+Step #3 - "Build Docker image": Setting up libldap2:amd64 (2.6.10+dfsg-1) ...
+Step #3 - "Build Docker image": Setting up libidn2-0:amd64 (2.3.8-2) ...
+Step #3 - "Build Docker image": Setting up libperl5.40:amd64 (5.40.1-6+deb13u1) ...
+Step #3 - "Build Docker image": Setting up perl (5.40.1-6+deb13u1) ...
+Step #3 - "Build Docker image": Setting up libgssapi-krb5-2:amd64 (1.21.3-5+deb13u1) ...
+Step #3 - "Build Docker image": Setting up libgnutls30t64:amd64 (3.8.9-3+deb13u4) ...
+Step #3 - "Build Docker image": Setting up libpsl5t64:amd64 (0.21.2-1.1+b1) ...
+Step #3 - "Build Docker image": Setting up liberror-perl (0.17030-1) ...
+Step #3 - "Build Docker image": Setting up librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2+b5) ...
+Step #3 - "Build Docker image": Setting up libngtcp2-crypto-gnutls8:amd64 (1.11.0-1+deb13u1) ...
+Step #3 - "Build Docker image": Setting up libcurl3t64-gnutls:amd64 (8.14.1-2+deb13u7) ...
+Step #3 - "Build Docker image": Setting up git (1:2.47.3-0+deb13u1) ...
+Step #3 - "Build Docker image": Processing triggers for libc-bin (2.41-12+deb13u4) ...
+Step #3 - "Build Docker image": Removing intermediate container 70814165277f
+Step #3 - "Build Docker image":  ---> 634f70d9a9e5
+Step #3 - "Build Docker image": Step 4/21 : ENV UV_PYTHON_DOWNLOADS=never     UV_COMPILE_BYTECODE=1     UV_LINK_MODE=copy
+Step #3 - "Build Docker image":  ---> Running in 54f0d0ffee1e
+Step #3 - "Build Docker image": Removing intermediate container 54f0d0ffee1e
+Step #3 - "Build Docker image":  ---> 3ad83867f24f
+Step #3 - "Build Docker image": Step 5/21 : WORKDIR /app
+Step #3 - "Build Docker image":  ---> Running in 95c3eafa2054
+Step #3 - "Build Docker image": Removing intermediate container 95c3eafa2054
+Step #3 - "Build Docker image":  ---> ccbfe60266dd
+Step #3 - "Build Docker image": Step 6/21 : COPY pyproject.toml uv.lock .python-version ./
+Step #3 - "Build Docker image":  ---> 4f570ecf8fc0
+Step #3 - "Build Docker image": Step 7/21 : RUN uv sync --locked --no-install-project
+Step #3 - "Build Docker image":  ---> Running in fd3f6a10ca21
+Step #3 - "Build Docker image": [91mUsing CPython 3.12.16 interpreter at: /usr/local/bin/python3.12
+Step #3 - "Build Docker image": [0m[91mCreating virtual environment at: [0m[91m.venv[0m[91m
+Step #3 - "Build Docker image": [0m[91mResolved 102 packages in 2ms
+Step #3 - "Build Docker image": [0m[91mDownloading cryptography (4.5MiB)
+Step #3 - "Build Docker image": [0m[91mDownloading fonttools (5.1MiB)[0m[91m
+Step #3 - "Build Docker image": [0m[91mDownloading pillow (6.6MiB)
+Step #3 - "Build Docker image": [0m[91mDownloading pygments (1.2MiB)
+Step #3 - "Build Docker image": [0m[91mDownloading scikit-learn (8.7MiB)
+Step #3 - "Build Docker image": [0m[91mDownloading pandas [0m[91m(11.8MiB)
+Step #3 - "Build Docker image": [0m[91mDownloading pydantic-core [0m[91m(2.0MiB)
+Step #3 - "Build Docker image": [0m[91mDownloading numpy [0m[91m(15.9MiB)
+Step #3 - "Build Docker image": [0m[91mDownloading scipy (33.7MiB)
+Step #3 - "Build Docker image": [0m[91mDownloading kiwisolver (1.4MiB)[0m[91m
+Step #3 - "Build Docker image": [0m[91mDownloading pyarrow [0m[91m(47.8MiB)
+Step #3 - "Build Docker image": [0m[91mDownloading aiohttp (1.8MiB)
+Step #3 - "Build Docker image": [0m[91mDownloading matplotlib [0m[91m(9.4MiB)
+Step #3 - "Build Docker image": [0m[91mDownloading ruff (10.7MiB)[0m[91m
+Step #3 - "Build Docker image": [0m[91mDownloading mlflow-skinny [0m[91m(3.9MiB)
+Step #3 - "Build Docker image": [0m[91mDownloading mlflow (11.4MiB)
+Step #3 - "Build Docker image": [0m[91mDownloading databricks-sdk [0m[91m(1.0MiB)
+Step #3 - "Build Docker image": [0m[91mDownloading mlflow-tracing [0m[91m(1.9MiB)
+Step #3 - "Build Docker image": [0m[91mDownloading sqlalchemy [0m[91m(4.5MiB)
+Step #3 - "Build Docker image": [0m[91m Downloaded databricks-sdk
+Step #3 - "Build Docker image": [0m[91m Downloaded pygments
+Step #3 - "Build Docker image": [0m[91m [0m[91mDownloaded[0m[91m [0m[91mkiwisolver[0m[91m
+Step #3 - "Build Docker image": [0m[91m Downloaded mlflow-tracing
+Step #3 - "Build Docker image": [0m[91m Downloaded aiohttp
+Step #3 - "Build Docker image": [0m[91m [0m[91mDownloaded[0m[91m [0m[91mpydantic-core[0m[91m
+Step #3 - "Build Docker image": [0m[91m [0m[91mDownloaded[0m[91m [0m[91mmlflow-skinny[0m[91m
+Step #3 - "Build Docker image": [0m[91m [0m[91mDownloaded[0m[91m [0m[91mcryptography[0m[91m
+Step #3 - "Build Docker image": [0m[91m [0m[91mDownloaded[0m[91m [0m[91msqlalchemy[0m[91m
+Step #3 - "Build Docker image": [0m[91m Downloaded fonttools
+Step #3 - "Build Docker image": [0m[91m [0m[91mDownloaded[0m[91m [0m[91mpillow[0m[91m
+Step #3 - "Build Docker image": [0m[91m Downloaded scikit-learn
+Step #3 - "Build Docker image": [0m[91m Downloaded matplotlib
+Step #3 - "Build Docker image": [0m[91m Downloaded ruff
+Step #3 - "Build Docker image": [0m[91m [0m[91mDownloaded[0m[91m [0m[91mmlflow[0m[91m
+Step #3 - "Build Docker image": [0m[91m Downloaded pandas
+Step #3 - "Build Docker image": [0m[91m Downloaded numpy
+Step #3 - "Build Docker image": [0m[91m [0m[91mDownloaded[0m[91m [0m[91mscipy[0m[91m
+Step #3 - "Build Docker image": [0m[91m Downloaded pyarrow
+Step #3 - "Build Docker image": [0m[91mPrepared 97 packages in 4.40s
+Step #3 - "Build Docker image": [0m[91mInstalled 97 packages in 3.39s
+Step #3 - "Build Docker image": [0m[91mBytecode compiled 8824 files in 28.90s
+Step #3 - "Build Docker image": [0m[91m + aiohappyeyeballs==[0m[91m2[0m[91m.[0m[91m7[0m[91m.1[0m[91m
+Step #3 - "Build Docker image": [0m[91m +[0m[91m [0m[91maiohttp==[0m[91m3[0m[91m.[0m[91m14[0m[91m.[0m[91m4[0m[91m
+Step #3 - "Build Docker image": [0m[91m [0m[91m+[0m[91m [0m[91maiosignal[0m[91m==[0m[91m1[0m[91m.4[0m[91m.[0m[91m0[0m[91m
+Step #3 - "Build Docker image": [0m[91m [0m[91m+[0m[91m [0m[91malembic[0m[91m==[0m[91m1[0m[91m.[0m[91m20[0m[91m.[0m[91m0[0m[91m
+Step #3 - "Build Docker image":  [0m[91m+[0m[91m annotated-doc[0m[91m==[0m[91m0[0m[91m.[0m[91m0[0m[91m.[0m[91m5
+Step #3 - "Build Docker image": [0m[91m +[0m[91m [0m[91mannotated-types==[0m[91m0.[0m[91m8[0m[91m.[0m[91m0[0m[91m
+Step #3 - "Build Docker image":  +[0m[91m [0m[91manyio[0m[91m==4.15.[0m[91m1[0m[91m
+Step #3 - "Build Docker image": [0m[91m [0m[91m+[0m[91m attrs==26[0m[91m.[0m[91m1.[0m[91m0[0m[91m
+Step #3 - "Build Docker image": [0m[91m [0m[91m+ blinker==1[0m[91m.[0m[91m9.[0m[91m0[0m[91m
+Step #3 - "Build Docker image": [0m[91m + cachetools==7.2.1
+Step #3 - "Build Docker image":  + certifi==2026[0m[91m.[0m[91m7.22
+Step #3 - "Build Docker image": [0m[91m [0m[91m+[0m[91m cffi==[0m[91m2.1[0m[91m.[0m[91m1[0m[91m
+Step #3 - "Build Docker image":  + charset-normalizer==3[0m[91m.5.2
+Step #3 - "Build Docker image": [0m[91m [0m[91m+[0m[91m click==[0m[91m8.[0m[91m5[0m[91m.0
+Step #3 - "Build Docker image":  + cloudpickle==3.1.2
+Step #3 - "Build Docker image":  + contourpy==1.4.0
+Step #3 - "Build Docker image": [0m[91m [0m[91m+[0m[91m cryptography==50.0.2
+Step #3 - "Build Docker image":  + cycler==0.12.1
+Step #3 - "Build Docker image":  +[0m[91m databricks-sdk==0.148.0
+Step #3 - "Build Docker image":  + docker==7.2.0
+Step #3 - "Build Docker image":  + fastapi==0.142.2
+Step #3 - "Build Docker image":  + flask==3.1.3
+Step #3 - "Build Docker image":  + [0m[91mflask-cors==6.0.5
+Step #3 - "Build Docker image":  + fonttools==4.66.1
+Step #3 - "Build Docker image":  + frozenlist==1.8.0
+Step #3 - "Build Docker image":  + gitdb==4.0.12
+Step #3 - "Build Docker image":  + gitpython==3.2.0
+Step #3 - "Build Docker image":  + google-auth==2.60.0
+Step #3 - "Build Docker image":  + graphene==3.4.3
+Step #3 - "Build Docker image":  + graphql-core==3.2.13
+Step #3 - "Build Docker image":  + graphql-relay==3.2.0
+Step #3 - "Build Docker image":  + gunicorn==26.2.0
+Step #3 - "Build Docker image":  + h11==0.16.0
+Step #3 - "Build Docker image":  + httpcore2==2.13.1
+Step #3 - "Build Docker image":  + httpx2==2.13.1
+Step #3 - "Build Docker image":  + huey==3.4.0
+Step #3 - "Build Docker image":  + idna==3.20
+Step #3 - "Build Docker image":  + importlib-metadata==9.0.1
+Step #3 - "Build Docker image":  + iniconfig==2.3.1
+Step #3 - "Build Docker image":  + itsdangerous==2.2.0
+Step #3 - "Build Docker image":  + jinja2==3.1.6
+Step #3 - "Build Docker image":  + joblib==1.6.0
+Step #3 - "Build Docker image":  + kiwisolver==1.5.1
+Step #3 - "Build Docker image":  + mako==1.4.3
+Step #3 - "Build Docker image":  + markupsafe==3.0.4
+Step #3 - "Build Docker image":  + matplotlib==3.11.2
+Step #3 - "Build Docker image":  + mlflow==3.17.0
+Step #3 - "Build Docker image":  + mlflow-skinny==3.17.0
+Step #3 - "Build Docker image":  + mlflow-tracing==3.17.0
+Step #3 - "Build Docker image":  + multidict==6.9.1
+Step #3 - "Build Docker image":  + narwhals==2.26.0
+Step #3 - "Build Docker image":  + numpy==2.5.3
+Step #3 - "Build Docker image":  + opentelemetry-api==1.45.[0m[91m1
+Step #3 - "Build Docker image": [0m[91m + opentelemetry-proto==1.45.1
+Step #3 - "Build Docker image":  + opentelemetry-sdk==1[0m[91m.45.1
+Step #3 - "Build Docker image":  +[0m[91m opentelemetry-semantic-conventions[0m[91m==0.66b1
+Step #3 - "Build Docker image":  +[0m[91m packaging==[0m[91m26.3[0m[91m
+Step #3 - "Build Docker image":  [0m[91m+ [0m[91mpandas==2.3.3
+Step #3 - "Build Docker image": [0m[91m [0m[91m+[0m[91m pillow==12.3.0
+Step #3 - "Build Docker image":  + pluggy==1.6.0
+Step #3 - "Build Docker image":  + prettytable==3.18.0
+Step #3 - "Build Docker image":  + propcache==0.5.4
+Step #3 - "Build Docker image":  + protobuf==6.33.6
+Step #3 - "Build Docker image":  + pyarrow==25.0.1
+Step #3 - "Build Docker image":  + pyasn1==0.6.4
+Step #3 - "Build Docker image":  + pyasn1-modules==0.4.2
+Step #3 - "Build Docker image":  + pycparser==3.0
+Step #3 - "Build Docker image":  + pydantic[0m[91m==2.13.5
+Step #3 - "Build Docker image":  + pydantic-core==2.46.5
+Step #3 - "Build Docker image":  + pygments==2.21.0
+Step #3 - "Build Docker image":  + pyparsing==3.3.3
+Step #3 - "Build Docker image":  + pytest==9.1.1
+Step #3 - "Build Docker image":  + python-dateutil==2.9.0.post0
+Step #3 - "Build Docker image":  + python-dotenv==1.2.4
+Step #3 - "Build Docker image":  + pytz==2026.5
+Step #3 - "Build Docker image":  + pyyaml==6.0.3
+Step #3 - "Build Docker image": [0m[91m + requests==2.34.2
+Step #3 - "Build Docker image": [0m[91m + ruff==[0m[91m0.15.7
+Step #3 - "Build Docker image":  + scikit-learn==1.9.1
+Step #3 - "Build Docker image":  + scipy==1.18.1
+Step #3 - "Build Docker image":  + six==1.17.0
+Step #3 - "Build Docker image":  + skops==0.16.0
+Step #3 - "Build Docker image":  + smmap==5.0.3
+Step #3 - "Build Docker image":  + sqlalchemy==2.1.3
+Step #3 - "Build Docker image":  + sqlparse==0.6.0
+Step #3 - "Build Docker image":  + starlette==1.7.0
+Step #3 - "Build Docker image":  + threadpoolctl==3.7.0
+Step #3 - "Build Docker image":  + truststore==0.10.5
+Step #3 - "Build Docker image":  + typing-extensions==4.16.0
+Step #3 - "Build Docker image":  + typing-inspection==0.4.4
+Step #3 - "Build Docker image":  + tzdata==2026.5
+Step #3 - "Build Docker image":  + urllib3==2.8.0
+Step #3 - "Build Docker image":  + uvicorn==0.54.0
+Step #3 - "Build Docker image":  + wcwidth==0.9.2
+Step #3 - "Build Docker image":  + werkzeug==3.1.9
+Step #3 - "Build Docker image":  + yarl==1.25.1
+Step #3 - "Build Docker image":  + zipp==4.1.1
+Step #3 - "Build Docker image": [0mRemoving intermediate container fd3f6a10ca21
+Step #3 - "Build Docker image":  ---> 2a702aa4ef25
+Step #3 - "Build Docker image": Step 8/21 : COPY data ./data
+Step #3 - "Build Docker image":  ---> 71142718b3f5
+Step #3 - "Build Docker image": Step 9/21 : COPY configs ./configs
+Step #3 - "Build Docker image":  ---> 6746c047b78f
+Step #3 - "Build Docker image": Step 10/21 : COPY src ./src
+Step #3 - "Build Docker image":  ---> 50d790e0a9c5
+Step #3 - "Build Docker image": Step 11/21 : RUN uv sync --locked
+Step #3 - "Build Docker image":  ---> Running in e91ff14a0d18
+Step #3 - "Build Docker image": [91mResolved 102 packages in 1ms
+Step #3 - "Build Docker image": [0m[91m   Building bike-demand @ file:///app
+Step #3 - "Build Docker image": [0m[91m      Built bike-demand @ file:///app
+Step #3 - "Build Docker image": [0m[91mPrepared 1 package in 8ms
+Step #3 - "Build Docker image": [0m[91mInstalled 1 package in 1ms
+Step #3 - "Build Docker image": [0m[91mBytecode compiled 8824 files in 1.00s
+Step #3 - "Build Docker image": [0m[91m + bike-demand==0.1.0 (from file:///app)
+Step #3 - "Build Docker image": [0mRemoving intermediate container e91ff14a0d18
+Step #3 - "Build Docker image":  ---> 9d49b5645cca
+Step #3 - "Build Docker image": Step 12/21 : COPY README.md ./
+Step #3 - "Build Docker image":  ---> 7281fc8c819f
+Step #3 - "Build Docker image": Step 13/21 : COPY reports/week-01-team.md ./reports/week-01-team.md
+Step #3 - "Build Docker image":  ---> 091efc7eb064
+Step #3 - "Build Docker image": Step 14/21 : COPY .github/workflows/ci.yml ./.github/workflows/ci.yml
+Step #3 - "Build Docker image":  ---> 824d613da4f1
+Step #3 - "Build Docker image": Step 15/21 : COPY tests ./tests
+Step #3 - "Build Docker image":  ---> 061aab22547f
+Step #3 - "Build Docker image": Step 16/21 : ARG BIKE_DEMAND_REVISION=unknown
+Step #3 - "Build Docker image":  ---> Running in c935b4fd89c7
+Step #3 - "Build Docker image": Removing intermediate container c935b4fd89c7
+Step #3 - "Build Docker image":  ---> 1fe69cb49e87
+Step #3 - "Build Docker image": Step 17/21 : ENV BIKE_DEMAND_REVISION=${BIKE_DEMAND_REVISION}
+Step #3 - "Build Docker image":  ---> Running in 5b8688bcb9d3
+Step #3 - "Build Docker image": Removing intermediate container 5b8688bcb9d3
+Step #3 - "Build Docker image":  ---> 96b86c03caa0
+Step #3 - "Build Docker image": Step 18/21 : EXPOSE 8000
+Step #3 - "Build Docker image":  ---> Running in daa83643ca51
+Step #3 - "Build Docker image": Removing intermediate container daa83643ca51
+Step #3 - "Build Docker image":  ---> a2278fd3abaf
+Step #3 - "Build Docker image": Step 19/21 : CMD ["uv", "run", "--locked", "uvicorn", "bike_demand.api:app", "--host", "0.0.0.0", "--port", "8000"]
+Step #3 - "Build Docker image":  ---> Running in 7e8dc65997fc
+Step #3 - "Build Docker image": Removing intermediate container 7e8dc65997fc
+Step #3 - "Build Docker image":  ---> e630193b81ee
+Step #3 - "Build Docker image": Step 20/21 : FROM app AS service
+Step #3 - "Build Docker image":  ---> e630193b81ee
+Step #3 - "Build Docker image": Step 21/21 : COPY artifacts/model.joblib artifacts/model-metadata.json ./artifacts/
+Step #3 - "Build Docker image":  ---> 98972d0aeddc
+Step #3 - "Build Docker image": Successfully built 98972d0aeddc
+Step #3 - "Build Docker image": Successfully tagged europe-west1-docker.pkg.dev/mlops-demo-512323/cloud-run-source-deploy/mlops-fri2-teama-bike-demand:fb9ebe330a4312c6e63a2e7be6f4b2d4f59cc500
+Finished Step #3 - "Build Docker image"
+Starting Step #4 - "Start built image"
+Step #4 - "Start built image": Already have image (with digest): gcr.io/cloud-builders/docker
+Step #4 - "Start built image": da7e87968a4678b06d4cfdcff1bea86ccab3513b4146d2dee0a224412091a790
+Finished Step #4 - "Start built image"
+Starting Step #5 - "Verify built image"
+Step #5 - "Verify built image": Already have image (with digest): python:3.12-slim
+Step #5 - "Verify built image": FAIL: cannot verify /health: <urlopen error [Errno 111] Connection refused>
+Step #5 - "Verify built image": FAIL: cannot verify /health: <urlopen error [Errno 111] Connection refused>
+Step #5 - "Verify built image": HTTP status: expected=200, observed=200 -> OK
+Step #5 - "Verify built image": readiness: expected='ok', observed='ok' -> OK
+Step #5 - "Verify built image": model_version: expected='baseline-f01a22df4c39', observed='baseline-f01a22df4c39' -> OK
+Step #5 - "Verify built image": code_revision: expected='fb9ebe330a4312c6e63a2e7be6f4b2d4f59cc500', observed='fb9ebe330a4312c6e63a2e7be6f4b2d4f59cc500' -> OK
+Step #5 - "Verify built image": model_sha256: expected='fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304', observed='fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304' -> OK
+Step #5 - "Verify built image": Deployment verification PASSED
+Finished Step #5 - "Verify built image"
+Starting Step #6 - "Push Docker image"
+Step #6 - "Push Docker image": Already have image (with digest): gcr.io/cloud-builders/docker
+Step #6 - "Push Docker image": The push refers to repository [europe-west1-docker.pkg.dev/mlops-demo-512323/cloud-run-source-deploy/mlops-fri2-teama-bike-demand]
+Step #6 - "Push Docker image": 8fcd9c1de5e7: Preparing
+Step #6 - "Push Docker image": 2ba9eb1db35b: Preparing
+Step #6 - "Push Docker image": e0a814305343: Preparing
+Step #6 - "Push Docker image": d129e00f031b: Preparing
+Step #6 - "Push Docker image": 3f5470f585ac: Preparing
+Step #6 - "Push Docker image": df989738d333: Preparing
+Step #6 - "Push Docker image": 71243c081dec: Preparing
+Step #6 - "Push Docker image": 2ff919441795: Preparing
+Step #6 - "Push Docker image": 65277c8430cb: Preparing
+Step #6 - "Push Docker image": b0658b378160: Preparing
+Step #6 - "Push Docker image": 1b13be702811: Preparing
+Step #6 - "Push Docker image": c7cd024ceaf3: Preparing
+Step #6 - "Push Docker image": f08baf16a1ef: Preparing
+Step #6 - "Push Docker image": c569e0f34386: Preparing
+Step #6 - "Push Docker image": 340931a1d986: Preparing
+Step #6 - "Push Docker image": 96a69f98ae07: Preparing
+Step #6 - "Push Docker image": 3dc3efdf0110: Preparing
+Step #6 - "Push Docker image": dd57f90311a2: Preparing
+Step #6 - "Push Docker image": 1b13be702811: Waiting
+Step #6 - "Push Docker image": c7cd024ceaf3: Waiting
+Step #6 - "Push Docker image": f08baf16a1ef: Waiting
+Step #6 - "Push Docker image": c569e0f34386: Waiting
+Step #6 - "Push Docker image": 340931a1d986: Waiting
+Step #6 - "Push Docker image": 96a69f98ae07: Waiting
+Step #6 - "Push Docker image": 3dc3efdf0110: Waiting
+Step #6 - "Push Docker image": dd57f90311a2: Waiting
+Step #6 - "Push Docker image": e0a814305343: Pushed
+Step #6 - "Push Docker image": 3f5470f585ac: Pushed
+Step #6 - "Push Docker image": df989738d333: Pushed
+Step #6 - "Push Docker image": 2ba9eb1db35b: Pushed
+Step #6 - "Push Docker image": 71243c081dec: Pushed
+Step #6 - "Push Docker image": d129e00f031b: Pushed
+Step #6 - "Push Docker image": 2ff919441795: Pushed
+Step #6 - "Push Docker image": 96a69f98ae07: Layer already exists
+Step #6 - "Push Docker image": 65277c8430cb: Pushed
+Step #6 - "Push Docker image": 340931a1d986: Layer already exists
+Step #6 - "Push Docker image": 3dc3efdf0110: Layer already exists
+Step #6 - "Push Docker image": 8fcd9c1de5e7: Pushed
+Step #6 - "Push Docker image": c7cd024ceaf3: Pushed
+Step #6 - "Push Docker image": 1b13be702811: Pushed
+Step #6 - "Push Docker image": f08baf16a1ef: Pushed
+Step #6 - "Push Docker image": c569e0f34386: Pushed
+Step #6 - "Push Docker image": dd57f90311a2: Pushed
+Step #6 - "Push Docker image": b0658b378160: Pushed
+Step #6 - "Push Docker image": fb9ebe330a4312c6e63a2e7be6f4b2d4f59cc500: digest: sha256:935085b64caa4f082b2028675b5735795a4b3626dc114a82c09d8ff8bfc93987 size: 4091
+Finished Step #6 - "Push Docker image"
+Starting Step #7 - "Deploy new revision without traffic"
+Step #7 - "Deploy new revision without traffic": Already have image (with digest): gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+Step #7 - "Deploy new revision without traffic": Deploying container to Cloud Run service [mlops-fri2-teama-bike-demand] in project [mlops-demo-512323] region [europe-west1]
+Step #7 - "Deploy new revision without traffic": Deploying...
+Step #7 - "Deploy new revision without traffic": Creating Revision........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................done
+Step #7 - "Deploy new revision without traffic": Done.
+Step #7 - "Deploy new revision without traffic": Service [mlops-fri2-teama-bike-demand] revision [mlops-fri2-teama-bike-demand-00021-rih] has been deployed and is serving 0 percent of traffic.
+Step #7 - "Deploy new revision without traffic": The revision can be reached directly at https://c-fb9ebe3---mlops-fri2-teama-bike-demand-7md3wlybfq-ew.a.run.app
+Step #7 - "Deploy new revision without traffic": Proxy locally with: gcloud run services proxy mlops-fri2-teama-bike-demand --region europe-west1 --project mlops-demo-512323
+Finished Step #7 - "Deploy new revision without traffic"
+Starting Step #8 - "Route traffic to verified revision"
+Step #8 - "Route traffic to verified revision": Already have image (with digest): gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+Step #8 - "Route traffic to verified revision": Updating traffic...
+Step #8 - "Route traffic to verified revision": Routing traffic........................done
+Step #8 - "Route traffic to verified revision": Done.
+Step #8 - "Route traffic to verified revision": URL: https://mlops-fri2-teama-bike-demand-7md3wlybfq-ew.a.run.app
+Step #8 - "Route traffic to verified revision": Traffic:
+Step #8 - "Route traffic to verified revision":   0%   mlops-fri2-teama-bike-demand-00020-jeg
+Step #8 - "Route traffic to verified revision":          c-ba57c3a: https://c-ba57c3a---mlops-fri2-teama-bike-demand-7md3wlybfq-ew.a.run.app
+Step #8 - "Route traffic to verified revision":   100% mlops-fri2-teama-bike-demand-00021-rih
+Step #8 - "Route traffic to verified revision":          c-fb9ebe3: https://c-fb9ebe3---mlops-fri2-teama-bike-demand-7md3wlybfq-ew.a.run.app
+Finished Step #8 - "Route traffic to verified revision"
+PUSH
+Pushing europe-west1-docker.pkg.dev/mlops-demo-512323/cloud-run-source-deploy/mlops-fri2-teama-bike-demand:fb9ebe330a4312c6e63a2e7be6f4b2d4f59cc500
+The push refers to repository [europe-west1-docker.pkg.dev/mlops-demo-512323/cloud-run-source-deploy/mlops-fri2-teama-bike-demand]
+8fcd9c1de5e7: Preparing
+2ba9eb1db35b: Preparing
+e0a814305343: Preparing
+d129e00f031b: Preparing
+3f5470f585ac: Preparing
+df989738d333: Preparing
+71243c081dec: Preparing
+2ff919441795: Preparing
+65277c8430cb: Preparing
+b0658b378160: Preparing
+1b13be702811: Preparing
+c7cd024ceaf3: Preparing
+f08baf16a1ef: Preparing
+c569e0f34386: Preparing
+340931a1d986: Preparing
+96a69f98ae07: Preparing
+3dc3efdf0110: Preparing
+dd57f90311a2: Preparing
+1b13be702811: Waiting
+c7cd024ceaf3: Waiting
+f08baf16a1ef: Waiting
+c569e0f34386: Waiting
+3dc3efdf0110: Waiting
+340931a1d986: Waiting
+96a69f98ae07: Waiting
+dd57f90311a2: Waiting
+d129e00f031b: Layer already exists
+71243c081dec: Layer already exists
+e0a814305343: Layer already exists
+3f5470f585ac: Layer already exists
+2ff919441795: Layer already exists
+df989738d333: Layer already exists
+65277c8430cb: Layer already exists
+8fcd9c1de5e7: Layer already exists
+b0658b378160: Layer already exists
+2ba9eb1db35b: Layer already exists
+1b13be702811: Layer already exists
+f08baf16a1ef: Layer already exists
+c569e0f34386: Layer already exists
+c7cd024ceaf3: Layer already exists
+3dc3efdf0110: Layer already exists
+96a69f98ae07: Layer already exists
+340931a1d986: Layer already exists
+dd57f90311a2: Layer already exists
+fb9ebe330a4312c6e63a2e7be6f4b2d4f59cc500: digest: sha256:935085b64caa4f082b2028675b5735795a4b3626dc114a82c09d8ff8bfc93987 size: 4091
+DONE
+----------------------------------------------------------------------------
