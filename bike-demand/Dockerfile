@@ -1,4 +1,6 @@
-FROM python:3.12-slim
+# Stage "app": code and dependencies, no model. GitHub Actions builds this stage,
+# because its runner cannot read the accepted bundle from Cloud Storage.
+FROM python:3.12-slim AS app
 
 COPY --from=ghcr.io/astral-sh/uv:0.12.23 /uv /uvx /bin/
 
@@ -18,7 +20,6 @@ RUN uv sync --locked --no-install-project
 COPY data ./data
 COPY configs ./configs
 COPY src ./src
-COPY artifacts/model.joblib artifacts/model-metadata.json ./artifacts/
 RUN uv sync --locked
 
 COPY README.md ./
@@ -30,3 +31,8 @@ ARG BIKE_DEMAND_REVISION=unknown
 ENV BIKE_DEMAND_REVISION=${BIKE_DEMAND_REVISION}
 EXPOSE 8000
 CMD ["uv", "run", "--locked", "uvicorn", "bike_demand.api:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# Stage "service" (default): adds the accepted bundle, which Cloud Build fetched
+# from Cloud Storage and checked against registry/accepted.json before building.
+FROM app AS service
+COPY artifacts/model.joblib artifacts/model-metadata.json ./artifacts/

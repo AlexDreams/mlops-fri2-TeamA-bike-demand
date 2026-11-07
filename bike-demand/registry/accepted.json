@@ -1,0 +1,10 @@
+{
+  "model_version": "baseline-f01a22df4c39",
+  "model_sha256": "fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304",
+  "metadata_sha256": "b5f94ebae026c7e0788c57c1c0bdb65d3df621d1d5d74b271c1126d8522c4e41",
+  "uri": "gs://mlops-fri2-teama-bike-demand-models/bundles/baseline-f01a22df4c39/",
+  "reference_prediction": 83.56200000000001,
+  "accepted_at": "2026-10-10T16:22:22.579207+00:00",
+  "decision": "Lab 4 baseline, accepted before the Lab 7 gate existed",
+  "previous": null
+}

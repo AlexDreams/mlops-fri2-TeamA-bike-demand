@@ -840,8 +840,83 @@ All rules must pass for a candidate to be eligible. Missing or invalid evidence 
 
 ### Failure and decisions (Alban)
 
-<!-- three claims, invalid, missing, reject, blocked, status -->
+*Gate code by Alban (PR #43); answers below written by Alexandre because Alban was unavailable.*
+
+**three claims: what must the gate defend?**
+
+- **Choice:** three groups of rules, all required.
+  - **Quality:** the candidate is compared with the train-mean baseline and the accepted model on the same validation rows.
+  - **Operation:** bundle size and p95 single-row predict latency (local, warm, 200 calls).
+  - **Integrity:** data snapshot digest, exact candidate and accepted bytes, 4,358 validation rows, finite predictions, clean checkout.
+- **Rejected:** deciding on MAE alone.
+- **Why:** a better score proves nothing if the bytes, rows or data are not the ones we think, or if the model cannot be served.
+
+**invalid: what evidence must never count as pass?**
+
+- **Choice:** policy thresholds must be finite numbers (NaN, booleans and strings are refused when the policy loads); predictions must be finite; a model whose bytes do not match its recorded SHA-256 is never loaded.
+- **Rejected:** comparing whatever values are present.
+- **Why:** `NaN <= x` is silently False and `True` compares as 1, so an invalid value could pass or fail a rule by accident.
+
+**missing: what if a required check did not run?**
+
+- **Choice:** the check is recorded as `missing` and the outcome is `blocked`; quality scores are not even computed.
+- **Rejected:** skipping the check and deciding on the rest.
+- **Why:** unavailable evidence is not passed evidence.
+
+**reject: which measured rule failed?**
+
+- **Choice:** the decision record in `bike-demand/decisions/` lists every failed rule with its observed and expected values, for example `quality.improves_on_accepted: fail (observed ..., expected <= accepted ... - 2.0)`.
+- **Rejected:** a single pass/fail flag.
+- **Why:** a reviewer must be able to see why, without rerunning anything.
+
+**blocked: what must be repaired before deciding?**
+
+- **Choice:** repair the evidence (fetch the accepted bundle, commit local changes, restore the data snapshot), then rerun. A blocked run is never reinterpreted as a pass or a reject.
+- **Rejected:** retrying until it passes.
+- **Why:** blocked means "we could not decide", which is different from "the candidate is worse".
+- **Observed:** in the review challenge of PR #43, one byte appended to the accepted model gave `blocked`, exit 2, `integrity.incumbent_bytes: fail`, and no score was computed.
+
+**status: how does CI observe the outcome?**
+
+- **Choice:** exit code `0` eligible, `1` rejected, `2` blocked, `3` failed before a decision; the JSON decision record is committed.
+- **Rejected:** printing the outcome only.
+- **Why:** a script or CI job can act on the exit code, and the committed record keeps the reasons.
 
 ### Accepted state and recovery (Alexandre)
 
-<!-- separate, identity, switch, concurrent, retain, how to recover without retraining -->
+**separate: what may a candidate write?**
+
+- **Choice:** a candidate writes only `bike-demand/runs/<run_id>/` (not committed) and its decision record in `bike-demand/decisions/`. Only `bike_demand.promote` writes the bucket and `registry/accepted.json`, and only from an `eligible` decision.
+- **Rejected:** training straight into `artifacts/`, as `train.py` does.
+- **Why:** a rejected candidate must not be able to reach the served model.
+
+**identity: what stays immutable for its lifetime?**
+
+- **Choice:** a version is its `model_version` plus the SHA-256 of `model.joblib` and `model-metadata.json`. Bundles are uploaded to `gs://mlops-fri2-teama-bike-demand-models/bundles/<model_version>/` with `--no-clobber`, and the bucket keeps object versions.
+- **Rejected:** overwriting a single `model.joblib`.
+- **Why:** once accepted, a version's bytes never change, so a digest checked today still means the same bytes later.
+
+**switch: what if promotion stops halfway?**
+
+- **Choice:** upload first, verify by re-downloading and comparing digests, then rewrite `accepted.json` in one atomic file replace. If anything stops before that, the pointer is unchanged and the service keeps serving the previous version; an uploaded but unreferenced bundle is harmless.
+- **Rejected:** changing the pointer before the bytes are safely stored.
+- **Why:** the pointer must never name bytes that do not exist.
+- **Going live:** the new pointer only takes effect through a reviewed PR whose merge triggers Cloud Build.
+
+**concurrent: what if the incumbent changed?**
+
+- **Choice:** promotion refuses if `accepted.json` no longer names the incumbent version and digest the gate compared against.
+- **Rejected:** promoting anyway.
+- **Why:** the decision was only valid against that incumbent; rerun the gate.
+
+**retain: what recovers without retraining?**
+
+- **Choice:** the previous bundle stays in the bucket, `previous` in `accepted.json` names it with its digests, and its Cloud Run revision is kept.
+- **Recovery, fastest:** `gcloud run services update-traffic mlops-fri2-teama-bike-demand --to-revisions=<previous revision>=100 --region=europe-west1`.
+- **Recovery, durable:** a reviewed PR restoring the previous pointer, so the next deploy serves it too.
+
+**How Cloud Build gets the model:**
+
+- The first build step downloads the bundle named in `registry/accepted.json` and stops unless both digests match.
+- The tests (including the `accepted_model` regression test) then run against it, and only then is the image built and deployed.
+- GitHub Actions cannot read the bucket (no keyless GCP login), so it skips that one test with `-m "not accepted_model"`; Cloud Build runs it.

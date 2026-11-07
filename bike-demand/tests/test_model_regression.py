@@ -1,4 +1,4 @@
-"""Regression check for the recorded Bike Demand prediction."""
+"""Regression check: the served bundle reproduces the prediction recorded at acceptance."""
 
 import json
 from pathlib import Path
@@ -7,35 +7,21 @@ import joblib
 import pandas as pd
 import pytest
 
+from bike_demand.preflight import sha256
+from bike_demand.promote import REFERENCE_INPUT
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
-REFERENCE_INPUT = {
-    "season": 1,
-    "yr": 1,
-    "mnth": 1,
-    "hr": 23,
-    "holiday": 1,
-    "weekday": 6,
-    "workingday": 1,
-    "weathersit": 1,
-    "temp": 1.0,
-    "atemp": 1.0,
-    "hum": 1.0,
-    "windspeed": 1.0,
-}
 
-REFERENCE_PREDICTION = 83.56200000000001
-EXPECTED_MODEL_VERSION = "baseline-f01a22df4c39"
-
-
+@pytest.mark.accepted_model
 def test_recorded_model_prediction():
-    """The saved model must reproduce the previously recorded prediction."""
+    """artifacts/ must hold the accepted bundle and reproduce its recorded value."""
+    accepted = json.loads((PROJECT_ROOT / "registry/accepted.json").read_text())
     artifacts = PROJECT_ROOT / "artifacts"
 
-    with (artifacts / "model-metadata.json").open(encoding="utf-8") as f:
-        metadata = json.load(f)
-
-    assert metadata["model_version"] == EXPECTED_MODEL_VERSION
+    assert sha256(artifacts / "model.joblib") == accepted["model_sha256"]
+    metadata = json.loads((artifacts / "model-metadata.json").read_text())
+    assert metadata["model_version"] == accepted["model_version"]
 
     model = joblib.load(artifacts / "model.joblib")
 
@@ -49,7 +35,7 @@ def test_recorded_model_prediction():
     actual = float(model.predict(features)[0])
 
     assert actual == pytest.approx(
-        REFERENCE_PREDICTION,
+        accepted["reference_prediction"],
         abs=1e-6,
         rel=0,
     )

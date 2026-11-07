@@ -1,0 +1,86 @@
+docker	Build Docker image	﻿2026-11-07T11:59:11.4488923Z ##[group]Run docker build -t bike-demand:ci ./bike-demand
+docker	Build Docker image	2026-11-07T11:59:11.4489548Z ^[[36;1mdocker build -t bike-demand:ci ./bike-demand^[[0m
+docker	Build Docker image	2026-11-07T11:59:11.4510919Z shell: /usr/bin/bash -e {0}
+docker	Build Docker image	2026-11-07T11:59:11.4511293Z ##[endgroup]
+docker	Build Docker image	2026-11-07T11:59:11.8994202Z #0 building with "default" instance using docker driver
+docker	Build Docker image	2026-11-07T11:59:11.8995352Z 
+docker	Build Docker image	2026-11-07T11:59:11.8995810Z #1 [internal] load build definition from Dockerfile
+docker	Build Docker image	2026-11-07T11:59:11.8996885Z #1 transferring dockerfile: 907B done
+docker	Build Docker image	2026-11-07T11:59:11.8997650Z #1 DONE 0.0s
+docker	Build Docker image	2026-11-07T11:59:11.8997946Z 
+docker	Build Docker image	2026-11-07T11:59:11.8998332Z #2 [internal] load metadata for ghcr.io/astral-sh/uv:0.12.23
+docker	Build Docker image	2026-11-07T11:59:12.0589225Z #2 ...
+docker	Build Docker image	2026-11-07T11:59:12.0589929Z 
+docker	Build Docker image	2026-11-07T11:59:12.0590370Z #3 [auth] library/python:pull token for registry-1.docker.io
+docker	Build Docker image	2026-11-07T11:59:12.2081362Z #3 DONE 0.0s
+docker	Build Docker image	2026-11-07T11:59:12.2082600Z 
+docker	Build Docker image	2026-11-07T11:59:12.2083091Z #4 [internal] load metadata for docker.io/library/python:3.12-slim
+docker	Build Docker image	2026-11-07T11:59:12.2427418Z #4 ...
+docker	Build Docker image	2026-11-07T11:59:12.2427888Z 
+docker	Build Docker image	2026-11-07T11:59:12.2428306Z #2 [internal] load metadata for ghcr.io/astral-sh/uv:0.12.23
+docker	Build Docker image	2026-11-07T11:59:12.2429181Z #2 DONE 0.5s
+docker	Build Docker image	2026-11-07T11:59:12.3931128Z 
+docker	Build Docker image	2026-11-07T11:59:12.3932280Z #4 [internal] load metadata for docker.io/library/python:3.12-slim
+docker	Build Docker image	2026-11-07T11:59:12.4362213Z #4 DONE 0.7s
+docker	Build Docker image	2026-11-07T11:59:12.4907674Z 
+docker	Build Docker image	2026-11-07T11:59:12.4908281Z #5 [internal] load .dockerignore
+docker	Build Docker image	2026-11-07T11:59:12.4909029Z #5 transferring context: 223B done
+docker	Build Docker image	2026-11-07T11:59:12.4909969Z #5 DONE 0.0s
+docker	Build Docker image	2026-11-07T11:59:12.4910458Z 
+docker	Build Docker image	2026-11-07T11:59:12.4911014Z #6 [internal] load build context
+docker	Build Docker image	2026-11-07T11:59:12.4912214Z #6 transferring context: 1.45MB 0.0s done
+docker	Build Docker image	2026-11-07T11:59:12.4913101Z #6 DONE 0.0s
+docker	Build Docker image	2026-11-07T11:59:12.4913495Z 
+docker	Build Docker image	2026-11-07T11:59:12.4913863Z #7 [stage-0  9/15] COPY src ./src
+docker	Build Docker image	2026-11-07T11:59:12.4914754Z #7 CACHED
+docker	Build Docker image	2026-11-07T11:59:12.4915126Z 
+docker	Build Docker image	2026-11-07T11:59:12.4915491Z #8 [stage-0  8/15] COPY configs ./configs
+docker	Build Docker image	2026-11-07T11:59:12.4916387Z #8 CACHED
+docker	Build Docker image	2026-11-07T11:59:12.4916792Z 
+docker	Build Docker image	2026-11-07T11:59:12.4917896Z #9 [stage-0  3/15] RUN apt-get update  && apt-get install -y --no-install-recommends git  && rm -rf /var/lib/apt/lists/*
+docker	Build Docker image	2026-11-07T11:59:12.4920013Z #9 CACHED
+docker	Build Docker image	2026-11-07T11:59:12.4920409Z 
+docker	Build Docker image	2026-11-07T11:59:12.4920996Z #10 [stage-0  5/15] COPY pyproject.toml uv.lock .python-version ./
+docker	Build Docker image	2026-11-07T11:59:12.4922213Z #10 CACHED
+docker	Build Docker image	2026-11-07T11:59:12.4922625Z 
+docker	Build Docker image	2026-11-07T11:59:12.4923151Z #11 [stage-0  6/15] RUN uv sync --locked --no-install-project
+docker	Build Docker image	2026-11-07T11:59:12.4924280Z #11 CACHED
+docker	Build Docker image	2026-11-07T11:59:12.4924698Z 
+docker	Build Docker image	2026-11-07T11:59:12.4925048Z #12 [stage-0  4/15] WORKDIR /app
+docker	Build Docker image	2026-11-07T11:59:12.4925896Z #12 CACHED
+docker	Build Docker image	2026-11-07T11:59:12.4926279Z 
+docker	Build Docker image	2026-11-07T11:59:12.4926636Z #13 [stage-0  7/15] COPY data ./data
+docker	Build Docker image	2026-11-07T11:59:12.4927522Z #13 CACHED
+docker	Build Docker image	2026-11-07T11:59:12.4927903Z 
+docker	Build Docker image	2026-11-07T11:59:12.4928511Z #14 [stage-0  2/15] COPY --from=ghcr.io/astral-sh/uv:0.12.23 /uv /uvx /bin/
+docker	Build Docker image	2026-11-07T11:59:12.4929706Z #14 CACHED
+docker	Build Docker image	2026-11-07T11:59:12.4930762Z 
+docker	Build Docker image	2026-11-07T11:59:12.4931655Z #15 [stage-0 10/15] COPY artifacts/model.joblib artifacts/model-metadata.json ./artifacts/
+docker	Build Docker image	2026-11-07T11:59:12.4939675Z #15 ERROR: failed to calculate checksum of ref aeba5083-36f4-4ab3-a6cd-5185eccc7a63::lie6vgrzm8mv169t10pcptcij: "/artifacts/model.joblib": not found
+docker	Build Docker image	2026-11-07T11:59:12.4941587Z 
+docker	Build Docker image	2026-11-07T11:59:12.4942566Z #16 FROM ghcr.io/astral-sh/uv:0.12.23@sha256:61d393e44e249f2e4b526b6c7ddcecce245946826e608e11c93ad4f5bba55b21
+docker	Build Docker image	2026-11-07T11:59:12.4944783Z #16 resolve ghcr.io/astral-sh/uv:0.12.23@sha256:61d393e44e249f2e4b526b6c7ddcecce245946826e608e11c93ad4f5bba55b21 done
+docker	Build Docker image	2026-11-07T11:59:12.4946870Z #16 sha256:61d393e44e249f2e4b526b6c7ddcecce245946826e608e11c93ad4f5bba55b21 2.20kB / 2.20kB done
+docker	Build Docker image	2026-11-07T11:59:12.4948771Z #16 sha256:dd2385ac82b9aff6489344ec2b22916db986eb135454d030bce3038c7598a689 669B / 669B done
+docker	Build Docker image	2026-11-07T11:59:12.4950974Z #16 sha256:2832daefdfaee215fd647b8bc850821ece2a4c4f7703a11895c6d4631ef0858e 1.30kB / 1.30kB done
+docker	Build Docker image	2026-11-07T11:59:12.4952720Z #16 CANCELED
+docker	Build Docker image	2026-11-07T11:59:12.4953351Z 
+docker	Build Docker image	2026-11-07T11:59:12.4954450Z #17 [stage-0  1/15] FROM docker.io/library/python:3.12-slim@sha256:4840d514c583a4d3d8cad3940e68dee6f0f6f3635c12fcd0a3d74c21a5b93a54
+docker	Build Docker image	2026-11-07T11:59:12.4956805Z #17 resolve docker.io/library/python:3.12-slim@sha256:4840d514c583a4d3d8cad3940e68dee6f0f6f3635c12fcd0a3d74c21a5b93a54 done
+docker	Build Docker image	2026-11-07T11:59:12.4959190Z #17 sha256:4840d514c583a4d3d8cad3940e68dee6f0f6f3635c12fcd0a3d74c21a5b93a54 10.37kB / 10.37kB done
+docker	Build Docker image	2026-11-07T11:59:12.4962015Z #17 sha256:05a994d2344eb364cc186910f4fc8786a38215f39f00d0acc25bff33a08f4177 1.75kB / 1.75kB done
+docker	Build Docker image	2026-11-07T11:59:12.4964729Z #17 sha256:78976a69c067520ef8be34cde307ef9f6fea6dcefa50edb57039773d241ca0db 5.66kB / 5.66kB done
+docker	Build Docker image	2026-11-07T11:59:12.4966514Z #17 CANCELED
+docker	Build Docker image	2026-11-07T11:59:12.4967260Z ------
+docker	Build Docker image	2026-11-07T11:59:12.4968454Z  > [stage-0 10/15] COPY artifacts/model.joblib artifacts/model-metadata.json ./artifacts/:
+docker	Build Docker image	2026-11-07T11:59:12.4970207Z ------
+docker	Build Docker image	2026-11-07T11:59:12.4971067Z Dockerfile:21
+docker	Build Docker image	2026-11-07T11:59:12.4971875Z --------------------
+docker	Build Docker image	2026-11-07T11:59:12.5043397Z   19 |     COPY configs ./configs
+docker	Build Docker image	2026-11-07T11:59:12.5044488Z   20 |     COPY src ./src
+docker	Build Docker image	2026-11-07T11:59:12.5045629Z   21 | >>> COPY artifacts/model.joblib artifacts/model-metadata.json ./artifacts/
+docker	Build Docker image	2026-11-07T11:59:12.5047113Z   22 |     RUN uv sync --locked
+docker	Build Docker image	2026-11-07T11:59:12.5048081Z   23 |     
+docker	Build Docker image	2026-11-07T11:59:12.5048789Z --------------------
+docker	Build Docker image	2026-11-07T11:59:12.5051284Z ERROR: failed to build: failed to solve: failed to compute cache key: failed to calculate checksum of ref aeba5083-36f4-4ab3-a6cd-5185eccc7a63::lie6vgrzm8mv169t10pcptcij: "/artifacts/model.joblib": not found
+docker	Build Docker image	2026-11-07T11:59:12.5063605Z ##[error]Process completed with exit code 1.

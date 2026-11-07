@@ -33,8 +33,11 @@ jobs:
       - run: uv run --locked python -m bike_demand.preflight
       - run: uv run --locked ruff check .
       - run: uv run --locked ruff format --check .
-      - name: Run all tests
-        run: uv run --locked pytest -q --strict-markers
+      # The accepted model bundle lives in Cloud Storage, which this runner
+      # cannot read (no keyless GCP login). Cloud Build runs these tests after
+      # fetching it.
+      - name: Run tests that do not need the accepted bundle
+        run: uv run --locked pytest -q --strict-markers -m "not accepted_model"
   docker:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -44,5 +47,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Build Docker image
-        run: docker build -t bike-demand:ci ./bike-demand
+      # The model is not in Git; build the code-and-dependencies stage only.
+      # Cloud Build builds the full "service" stage after fetching the model.
+      - name: Build Docker image (app stage, no model)
+        run: docker build --target app -t bike-demand:ci ./bike-demand
