@@ -1,0 +1,230 @@
+Guard test run on origin/main 8be8346 (contains PR #49), 2026-11-07T16:30:37Z
+Using CPython 3.12.15
+Creating virtual environment at: .venv
+   Building bike-demand @ file:///C:/Users/super/AppData/Local/Temp/claude/a7d2d21cbce3a288/6cf5c000-077f-47d8-bfff-074b412ac502/scratchpad/guardred/bike-demand
+      Built bike-demand @ file:///C:/Users/super/AppData/Local/Temp/claude/a7d2d21cbce3a288/6cf5c000-077f-47d8-bfff-074b412ac502/scratchpad/guardred/bike-demand
+Installed 100 packages in 15.47s
+............FFFFF                                                        [100%]
+================================== FAILURES ===================================
+_____________ test_request_values_reach_the_model_unchanged[hr-0] _____________
+
+tmp_path = WindowsPath('C:/Users/super/AppData/Local/Temp/pytest-of-super/pytest-37/test_request_values_reach_the_0')
+field = 'hr', value = 0
+
+    @pytest.mark.parametrize(
+        "field,value",
+        [("hr", 0), ("hr", 23), ("weathersit", 3), ("weathersit", 4), ("hum", 0.5)],
+    )
+    def test_request_values_reach_the_model_unchanged(tmp_path, field, value):
+        # Catches: request handling that rewrites a feature before prediction (a
+        # shifted hour, a remapped or rejected weather code), which the fake model
+        # above cannot see because it ignores its input.
+        model_path = tmp_path / "model.joblib"
+        joblib.dump(RecordingModel(), model_path)
+        (tmp_path / "model-metadata.json").write_text(
+            json.dumps(
+                {
+                    "model_version": "test-model-v1",
+                    "model_sha256": sha256(model_path),
+                    "features": list(FEATURES),
+                }
+            ),
+            encoding="utf-8",
+        )
+        RecordingModel.seen.clear()
+        request = {**VALID_REQUEST, field: value}
+    
+        with TestClient(create_app(tmp_path)) as client:
+            response = client.post("/predict", json=request)
+    
+        assert response.status_code == 200
+>       assert RecordingModel.seen == [{name: request[name] for name in FEATURES}]
+E       AssertionError: assert [{'season': 1...r': 1.0, ...}] == [{'season': 1...'hr': 0, ...}]
+E         
+E         At index 0 diff: {'season': 1.0, 'yr': 1.0, 'mnth': 1.0, 'hr': 1.0, 'holiday': 1.0, 'weekday': 6.0, 'workingday': 1.0, 'weathersit': 1.0, 'temp': 1.0, 'atemp': 1.0, 'hum': 1.0, 'windspeed': 1.0} != {'season': 1, 'yr': 1, 'mnth': 1, 'hr': 0, 'holiday': 1, 'weekday': 6, 'workingday': 1, 'weathersit': 1, 'temp': 1.0, 'atemp': 1.0, 'hum': 1.0, 'windspeed': 1.0}
+E         Use -v to get more diff
+
+tests\test_api.py:192: AssertionError
+---------------------------- Captured stderr call -----------------------------
+{"event":"http_request","request_id":"e34d7f30-9fb0-4ce1-9eb7-cb53bda94d71","method":"POST","path":"/predict","status_code":200,"latency_ms":7.04,"model_version":"test-model-v1","code_revision":"unknown"}
+------------------------------ Captured log call ------------------------------
+INFO     bike_demand.requests:api.py:89 {"event":"http_request","request_id":"e34d7f30-9fb0-4ce1-9eb7-cb53bda94d71","method":"POST","path":"/predict","status_code":200,"latency_ms":7.04,"model_version":"test-model-v1","code_revision":"unknown"}
+____________ test_request_values_reach_the_model_unchanged[hr-23] _____________
+
+tmp_path = WindowsPath('C:/Users/super/AppData/Local/Temp/pytest-of-super/pytest-37/test_request_values_reach_the_1')
+field = 'hr', value = 23
+
+    @pytest.mark.parametrize(
+        "field,value",
+        [("hr", 0), ("hr", 23), ("weathersit", 3), ("weathersit", 4), ("hum", 0.5)],
+    )
+    def test_request_values_reach_the_model_unchanged(tmp_path, field, value):
+        # Catches: request handling that rewrites a feature before prediction (a
+        # shifted hour, a remapped or rejected weather code), which the fake model
+        # above cannot see because it ignores its input.
+        model_path = tmp_path / "model.joblib"
+        joblib.dump(RecordingModel(), model_path)
+        (tmp_path / "model-metadata.json").write_text(
+            json.dumps(
+                {
+                    "model_version": "test-model-v1",
+                    "model_sha256": sha256(model_path),
+                    "features": list(FEATURES),
+                }
+            ),
+            encoding="utf-8",
+        )
+        RecordingModel.seen.clear()
+        request = {**VALID_REQUEST, field: value}
+    
+        with TestClient(create_app(tmp_path)) as client:
+            response = client.post("/predict", json=request)
+    
+        assert response.status_code == 200
+>       assert RecordingModel.seen == [{name: request[name] for name in FEATURES}]
+E       AssertionError: assert [{'season': 1...r': 0.0, ...}] == [{'season': 1...hr': 23, ...}]
+E         
+E         At index 0 diff: {'season': 1.0, 'yr': 1.0, 'mnth': 1.0, 'hr': 0.0, 'holiday': 1.0, 'weekday': 6.0, 'workingday': 1.0, 'weathersit': 1.0, 'temp': 1.0, 'atemp': 1.0, 'hum': 1.0, 'windspeed': 1.0} != {'season': 1, 'yr': 1, 'mnth': 1, 'hr': 23, 'holiday': 1, 'weekday': 6, 'workingday': 1, 'weathersit': 1, 'temp': 1.0, 'atemp': 1.0, 'hum': 1.0, 'windspeed': 1.0}
+E         Use -v to get more diff
+
+tests\test_api.py:192: AssertionError
+---------------------------- Captured stderr call -----------------------------
+{"event":"http_request","request_id":"d8fa1615-cbaa-413c-8f28-33b9a7235342","method":"POST","path":"/predict","status_code":200,"latency_ms":5.64,"model_version":"test-model-v1","code_revision":"unknown"}
+------------------------------ Captured log call ------------------------------
+INFO     bike_demand.requests:api.py:89 {"event":"http_request","request_id":"d8fa1615-cbaa-413c-8f28-33b9a7235342","method":"POST","path":"/predict","status_code":200,"latency_ms":5.64,"model_version":"test-model-v1","code_revision":"unknown"}
+_________ test_request_values_reach_the_model_unchanged[weathersit-3] _________
+
+tmp_path = WindowsPath('C:/Users/super/AppData/Local/Temp/pytest-of-super/pytest-37/test_request_values_reach_the_2')
+field = 'weathersit', value = 3
+
+    @pytest.mark.parametrize(
+        "field,value",
+        [("hr", 0), ("hr", 23), ("weathersit", 3), ("weathersit", 4), ("hum", 0.5)],
+    )
+    def test_request_values_reach_the_model_unchanged(tmp_path, field, value):
+        # Catches: request handling that rewrites a feature before prediction (a
+        # shifted hour, a remapped or rejected weather code), which the fake model
+        # above cannot see because it ignores its input.
+        model_path = tmp_path / "model.joblib"
+        joblib.dump(RecordingModel(), model_path)
+        (tmp_path / "model-metadata.json").write_text(
+            json.dumps(
+                {
+                    "model_version": "test-model-v1",
+                    "model_sha256": sha256(model_path),
+                    "features": list(FEATURES),
+                }
+            ),
+            encoding="utf-8",
+        )
+        RecordingModel.seen.clear()
+        request = {**VALID_REQUEST, field: value}
+    
+        with TestClient(create_app(tmp_path)) as client:
+            response = client.post("/predict", json=request)
+    
+        assert response.status_code == 200
+>       assert RecordingModel.seen == [{name: request[name] for name in FEATURES}]
+E       AssertionError: assert [{'season': 1...r': 0.0, ...}] == [{'season': 1...hr': 23, ...}]
+E         
+E         At index 0 diff: {'season': 1.0, 'yr': 1.0, 'mnth': 1.0, 'hr': 0.0, 'holiday': 1.0, 'weekday': 6.0, 'workingday': 1.0, 'weathersit': 3.0, 'temp': 1.0, 'atemp': 1.0, 'hum': 1.0, 'windspeed': 1.0} != {'season': 1, 'yr': 1, 'mnth': 1, 'hr': 23, 'holiday': 1, 'weekday': 6, 'workingday': 1, 'weathersit': 3, 'temp': 1.0, 'atemp': 1.0, 'hum': 1.0, 'windspeed': 1.0}
+E         Use -v to get more diff
+
+tests\test_api.py:192: AssertionError
+---------------------------- Captured stderr call -----------------------------
+{"event":"http_request","request_id":"facbe2d1-ab8f-4cf9-8ed7-ddd6e4258903","method":"POST","path":"/predict","status_code":200,"latency_ms":5.91,"model_version":"test-model-v1","code_revision":"unknown"}
+------------------------------ Captured log call ------------------------------
+INFO     bike_demand.requests:api.py:89 {"event":"http_request","request_id":"facbe2d1-ab8f-4cf9-8ed7-ddd6e4258903","method":"POST","path":"/predict","status_code":200,"latency_ms":5.91,"model_version":"test-model-v1","code_revision":"unknown"}
+_________ test_request_values_reach_the_model_unchanged[weathersit-4] _________
+
+tmp_path = WindowsPath('C:/Users/super/AppData/Local/Temp/pytest-of-super/pytest-37/test_request_values_reach_the_3')
+field = 'weathersit', value = 4
+
+    @pytest.mark.parametrize(
+        "field,value",
+        [("hr", 0), ("hr", 23), ("weathersit", 3), ("weathersit", 4), ("hum", 0.5)],
+    )
+    def test_request_values_reach_the_model_unchanged(tmp_path, field, value):
+        # Catches: request handling that rewrites a feature before prediction (a
+        # shifted hour, a remapped or rejected weather code), which the fake model
+        # above cannot see because it ignores its input.
+        model_path = tmp_path / "model.joblib"
+        joblib.dump(RecordingModel(), model_path)
+        (tmp_path / "model-metadata.json").write_text(
+            json.dumps(
+                {
+                    "model_version": "test-model-v1",
+                    "model_sha256": sha256(model_path),
+                    "features": list(FEATURES),
+                }
+            ),
+            encoding="utf-8",
+        )
+        RecordingModel.seen.clear()
+        request = {**VALID_REQUEST, field: value}
+    
+        with TestClient(create_app(tmp_path)) as client:
+            response = client.post("/predict", json=request)
+    
+        assert response.status_code == 200
+>       assert RecordingModel.seen == [{name: request[name] for name in FEATURES}]
+E       AssertionError: assert [{'season': 1...r': 0.0, ...}] == [{'season': 1...hr': 23, ...}]
+E         
+E         At index 0 diff: {'season': 1.0, 'yr': 1.0, 'mnth': 1.0, 'hr': 0.0, 'holiday': 1.0, 'weekday': 6.0, 'workingday': 1.0, 'weathersit': 4.0, 'temp': 1.0, 'atemp': 1.0, 'hum': 1.0, 'windspeed': 1.0} != {'season': 1, 'yr': 1, 'mnth': 1, 'hr': 23, 'holiday': 1, 'weekday': 6, 'workingday': 1, 'weathersit': 4, 'temp': 1.0, 'atemp': 1.0, 'hum': 1.0, 'windspeed': 1.0}
+E         Use -v to get more diff
+
+tests\test_api.py:192: AssertionError
+---------------------------- Captured stderr call -----------------------------
+{"event":"http_request","request_id":"f8633328-9879-4222-bcb7-10984502836d","method":"POST","path":"/predict","status_code":200,"latency_ms":7.48,"model_version":"test-model-v1","code_revision":"unknown"}
+------------------------------ Captured log call ------------------------------
+INFO     bike_demand.requests:api.py:89 {"event":"http_request","request_id":"f8633328-9879-4222-bcb7-10984502836d","method":"POST","path":"/predict","status_code":200,"latency_ms":7.48,"model_version":"test-model-v1","code_revision":"unknown"}
+___________ test_request_values_reach_the_model_unchanged[hum-0.5] ____________
+
+tmp_path = WindowsPath('C:/Users/super/AppData/Local/Temp/pytest-of-super/pytest-37/test_request_values_reach_the_4')
+field = 'hum', value = 0.5
+
+    @pytest.mark.parametrize(
+        "field,value",
+        [("hr", 0), ("hr", 23), ("weathersit", 3), ("weathersit", 4), ("hum", 0.5)],
+    )
+    def test_request_values_reach_the_model_unchanged(tmp_path, field, value):
+        # Catches: request handling that rewrites a feature before prediction (a
+        # shifted hour, a remapped or rejected weather code), which the fake model
+        # above cannot see because it ignores its input.
+        model_path = tmp_path / "model.joblib"
+        joblib.dump(RecordingModel(), model_path)
+        (tmp_path / "model-metadata.json").write_text(
+            json.dumps(
+                {
+                    "model_version": "test-model-v1",
+                    "model_sha256": sha256(model_path),
+                    "features": list(FEATURES),
+                }
+            ),
+            encoding="utf-8",
+        )
+        RecordingModel.seen.clear()
+        request = {**VALID_REQUEST, field: value}
+    
+        with TestClient(create_app(tmp_path)) as client:
+            response = client.post("/predict", json=request)
+    
+        assert response.status_code == 200
+>       assert RecordingModel.seen == [{name: request[name] for name in FEATURES}]
+E       AssertionError: assert [{'season': 1...r': 0.0, ...}] == [{'season': 1...hr': 23, ...}]
+E         
+E         At index 0 diff: {'season': 1.0, 'yr': 1.0, 'mnth': 1.0, 'hr': 0.0, 'holiday': 1.0, 'weekday': 6.0, 'workingday': 1.0, 'weathersit': 1.0, 'temp': 1.0, 'atemp': 1.0, 'hum': 0.5, 'windspeed': 1.0} != {'season': 1, 'yr': 1, 'mnth': 1, 'hr': 23, 'holiday': 1, 'weekday': 6, 'workingday': 1, 'weathersit': 1, 'temp': 1.0, 'atemp': 1.0, 'hum': 0.5, 'windspeed': 1.0}
+E         Use -v to get more diff
+
+tests\test_api.py:192: AssertionError
+---------------------------- Captured stderr call -----------------------------
+{"event":"http_request","request_id":"abaa905f-5e1a-4414-bf52-5e9ce238ca6d","method":"POST","path":"/predict","status_code":200,"latency_ms":5.27,"model_version":"test-model-v1","code_revision":"unknown"}
+------------------------------ Captured log call ------------------------------
+INFO     bike_demand.requests:api.py:89 {"event":"http_request","request_id":"abaa905f-5e1a-4414-bf52-5e9ce238ca6d","method":"POST","path":"/predict","status_code":200,"latency_ms":5.27,"model_version":"test-model-v1","code_revision":"unknown"}
+=========================== short test summary info ===========================
+FAILED tests/test_api.py::test_request_values_reach_the_model_unchanged[hr-0]
+FAILED tests/test_api.py::test_request_values_reach_the_model_unchanged[hr-23]
+FAILED tests/test_api.py::test_request_values_reach_the_model_unchanged[weathersit-3]
+FAILED tests/test_api.py::test_request_values_reach_the_model_unchanged[weathersit-4]
+FAILED tests/test_api.py::test_request_values_reach_the_model_unchanged[hum-0.5]
+5 failed, 12 passed in 13.54s

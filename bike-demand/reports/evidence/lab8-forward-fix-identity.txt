@@ -1,0 +1,6 @@
+﻿HTTP status: expected=200, observed=200 -> OK
+readiness: expected='ok', observed='ok' -> OK
+model_version: expected='baseline-f01a22df4c39', observed='baseline-f01a22df4c39' -> OK
+code_revision: expected='3cd9499326d5429bf617b13eb03a4cec337c40f8', observed='3cd9499326d5429bf617b13eb03a4cec337c40f8' -> OK
+model_sha256: expected='fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304', observed='fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304' -> OK
+Deployment verification PASSED

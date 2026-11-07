@@ -1,0 +1,38 @@
+{
+  "url": "https://mlops-fri2-teama-bike-demand-709271018248.europe-west1.run.app",
+  "window_utc": {
+    "start": "2026-11-07T15:33:59.025+00:00",
+    "end": "2026-11-07T15:34:19.458+00:00"
+  },
+  "population": "validation rows 2012-01-01..2012-06-30, every 20th in time order",
+  "health_before": {
+    "status": 200,
+    "body": {
+      "status": "ok",
+      "model_version": "baseline-f01a22df4c39",
+      "model_sha256": "fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304",
+      "code_revision": "713b00dfe000ad89db463f344e4d787bd9f27d14"
+    }
+  },
+  "health_after": {
+    "status": "ok",
+    "model_version": "baseline-f01a22df4c39",
+    "model_sha256": "fd98ceafc57a5babce61ce703cbf9cb8d1f83c6820b0b34fe30ad1a0fc49c304",
+    "code_revision": "713b00dfe000ad89db463f344e4d787bd9f27d14"
+  },
+  "eligible_attempts": 218,
+  "good_eligible_attempts": 218,
+  "success_rate": 1.0,
+  "eligible_status_counts": {
+    "200": 218
+  },
+  "model_versions_in_good_responses": {
+    "baseline-f01a22df4c39": 218
+  },
+  "validation_mae_bikes_per_hour": 84.25237661553119,
+  "mean_prediction": 131.829428777224,
+  "latency_ms_p50": 84.255,
+  "latency_ms_p95": 116.57,
+  "invalid_probes": 10,
+  "invalid_probes_rejected_422": 10
+}

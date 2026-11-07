@@ -77,4 +77,61 @@ Alexandre reviewed PR #43, the gate.
 
 ## Lab 8 — Service monitoring, incident diagnosis and rollback verification
 
-*Section written by the recorder (Thaddée) after the drill; see `reports/lab8-incident.md`.*
+Full record: [`reports/lab8-incident.md`](lab8-incident.md). Runbook: [`RUNBOOK.md`](../../RUNBOOK.md). Raw evidence: `reports/evidence/lab8-*`. All times are UTC on 2026-11-07.
+
+### Roles
+
+| Role | Member | Notes |
+|---|---|---|
+| Operator | Alexandre | Diagnosed without being told the fault. |
+| Injector | Alban | Shipped the fault in PR #49, then became unavailable; his injection note was not received. |
+| Recorder | Thaddée | Approved the fault PR without informing the operator, opened the revert PR #50, and reviewed the incident record. The record was drafted from raw evidence by the operator after the diagnosis. |
+
+### Monitoring
+
+`scripts/monitor_replay.py` replays the same 218 validation-period rows (plus 10 invalid probes) in every period and records:
+
+- the success rate of eligible attempts;
+- the MAE against labels that are never sent to the service;
+- latency;
+- the `/health` identity.
+
+Intentional 422 rejections are counted separately. An incident opens on a success rate below 1.0, any 5xx, or an MAE more than 1.0 bikes/h from the baseline. With the same model and code the replay is deterministic. Definitions are in the README, "Monitoring".
+
+### The drill
+
+1. **Fault:** PR #49, merged at 15:56:46, made the API shift the hour by one before predicting.
+2. **Undetected by the pipeline:** it passed CI, the Cloud Build tests and the image identity check, and was serving from about 16:03:51.
+3. **First signal (16:05:25):** replay MAE 95.14 against the 84.25 baseline, with success rate 1.0 and `/health` 200. A silent quality incident.
+4. **Hypotheses:**
+   - **A, model bytes changed:** rejected; the digest matched `accepted.json`.
+   - **C, platform:** rejected; no 5xx, normal latency.
+   - **B, code release:** supported; `code_revision` changed, and the diff showed `hr + 1`.
+5. **Rollback (16:08:30):** traffic moved to the retained revision `00025-cow` (verified commit `713b00d`, same accepted model). The pre-check through the tag URL timed out on a cold start; the RUNBOOK now says to retry.
+6. **Verification:** identity PASSED; replay MAE 84.25, identical to the baseline; Cloud Run events served by `00025-cow`.
+7. **Forward fix:**
+   - PR #50 (revert, merged 16:37:40) was deployed as `00030-gew`, code `3cd9499`.
+   - It was verified at 16:50: identity PASSED and MAE 84.25.
+   - A guard test, `test_request_values_reach_the_model_unchanged`, fails 5/5 on the faulty code and passes after the revert.
+
+| Period | Revision / code | Success | MAE (bikes/h) | 422 probes | 5xx |
+|---|---|---|---|---|---|
+| Baseline 15:34 | `00025-cow` / `713b00d` | 1.0 | 84.25 | 10/10 | 0 |
+| Incident 16:05 | `00027-nep` / `8be8346` | 1.0 | 95.14 | 10/10 | 0 |
+| After rollback 16:09 | `00025-cow` / `713b00d` | 1.0 | 84.25 | 10/10 | 0 |
+| After forward fix 16:50 | `00030-gew` / `3cd9499` | 1.0 | 84.25 | 10/10 | 0 |
+
+**Exposure:** about 4.7 minutes. Detection came 1.6 minutes after the faulty deploy, and recovery 3.1 minutes after the first signal.
+
+### What we learned
+
+- **Health is not quality:** `/health`, status codes and logs all looked normal; only the labelled replay saw the incident.
+- **Blind spot in the API tests:** they used a model that ignores its inputs, so request handling could rewrite features unseen. The guard test closes that gap.
+- **Rollback mechanics:** keeping every deploy as a tagged revision made the rollback a single traffic change, without retraining or rebuilding.
+
+### Limits
+
+- The replay is a fixed sample, not real traffic.
+- Latency is measured from a laptop.
+- Only one accepted model version exists (Lab 7 retained the baseline), so the rollback restored a previous code revision with the same model rather than a previous model.
+- The runbook peer walkthrough (slide 18) is recorded in the review of the final Lab 8 PR.
