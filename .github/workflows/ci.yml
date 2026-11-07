@@ -47,5 +47,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Build Docker image
-        run: docker build -t bike-demand:ci ./bike-demand
+      # The model is not in Git; build the code-and-dependencies stage only.
+      # Cloud Build builds the full "service" stage after fetching the model.
+      - name: Build Docker image (app stage, no model)
+        run: docker build --target app -t bike-demand:ci ./bike-demand
