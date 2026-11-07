@@ -1,7 +1,25 @@
 
 steps:
-  # The accepted model is not in Git. Download the bundle named by the reviewed
-  # registry/accepted.json and refuse to continue unless both digests match.
+  # The accepted model is not in Git. Read the reviewed registry/accepted.json
+  # (Python image), then download that bundle and refuse to continue unless both
+  # digests match (gcloud image; it has no python3 on its PATH).
+  - id: "Read accepted pointer"
+    name: "python:3.12-slim"
+    dir: "bike-demand"
+    entrypoint: "python3"
+    args:
+      - "-c"
+      - |
+        import json, pathlib
+        accepted = json.load(open("registry/accepted.json"))
+        pathlib.Path("/workspace/accepted-uri.txt").write_text(accepted["uri"])
+        pathlib.Path("/workspace/accepted.sha256").write_text(
+            accepted["model_sha256"] + "  artifacts/model.joblib\n"
+            + accepted["metadata_sha256"] + "  artifacts/model-metadata.json\n",
+            newline="\n",
+        )
+        print("Accepted version:", accepted["model_version"])
+
   - id: "Fetch accepted bundle"
     name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     dir: "bike-demand"
@@ -9,18 +27,10 @@ steps:
     args:
       - "-ceu"
       - |
-        uri=$$(python3 -c 'import json; print(json.load(open("registry/accepted.json"))["uri"])')
+        uri=$$(cat /workspace/accepted-uri.txt)
         mkdir -p artifacts
         gcloud storage cp "$${uri}model.joblib" "$${uri}model-metadata.json" artifacts/
-        python3 -c '
-        import hashlib, json
-        accepted = json.load(open("registry/accepted.json"))
-        for name, key in (("model.joblib", "model_sha256"), ("model-metadata.json", "metadata_sha256")):
-            digest = hashlib.sha256(open("artifacts/" + name, "rb").read()).hexdigest()
-            if digest != accepted[key]:
-                raise SystemExit(name + ": digest " + digest + " != " + accepted[key])
-        print("Accepted bundle verified:", accepted["model_version"])
-        '
+        sha256sum -c /workspace/accepted.sha256
 
   # Same checks as .github/workflows/ci.yml. Cloud Build stops at the first
   # failing step, so a red check means no image is built, pushed or deployed.
