@@ -1,8 +1,12 @@
 
+# Runs on every push to main (Cloud Build trigger). A failing step stops the build:
+# nothing after it runs, and the previously verified revision keeps serving.
 steps:
   # The accepted model is not in Git. Read the reviewed registry/accepted.json
   # (Python image), then download that bundle and refuse to continue unless both
   # digests match (gcloud image; it has no python3 on its PATH).
+  # _EXPECTED_MODEL_OVERRIDE is empty on normal runs; setting it to a wrong value
+  # on a manual run demonstrates that a failed live check leaves traffic unchanged.
   - id: "Read accepted pointer"
     name: "python:3.12-slim"
     dir: "bike-demand"
@@ -12,13 +16,17 @@ steps:
       - |
         import json, pathlib
         accepted = json.load(open("registry/accepted.json"))
-        pathlib.Path("/workspace/accepted-uri.txt").write_text(accepted["uri"])
-        pathlib.Path("/workspace/accepted.sha256").write_text(
+        workspace = pathlib.Path("/workspace")
+        (workspace / "accepted-uri.txt").write_text(accepted["uri"])
+        (workspace / "accepted.sha256").write_text(
             accepted["model_sha256"] + "  artifacts/model.joblib\n"
             + accepted["metadata_sha256"] + "  artifacts/model-metadata.json\n",
             newline="\n",
         )
-        print("Accepted version:", accepted["model_version"])
+        expected = "$_EXPECTED_MODEL_OVERRIDE" or accepted["model_version"]
+        (workspace / "expected-model.txt").write_text(expected)
+        (workspace / "expected-model-sha256.txt").write_text(accepted["model_sha256"])
+        print("Accepted version:", accepted["model_version"], "| expected live:", expected)
 
   - id: "Fetch accepted bundle"
     name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
@@ -32,8 +40,8 @@ steps:
         gcloud storage cp "$${uri}model.joblib" "$${uri}model-metadata.json" artifacts/
         sha256sum -c /workspace/accepted.sha256
 
-  # Same checks as .github/workflows/ci.yml. Cloud Build stops at the first
-  # failing step, so a red check means no image is built, pushed or deployed.
+  # Same checks as .github/workflows/ci.yml, plus the accepted-model regression
+  # test that GitHub Actions cannot run (it cannot read the bucket).
   - id: "Run blocking checks"
     name: "python:3.12-slim"
     dir: "bike-demand"
@@ -54,6 +62,8 @@ steps:
         uv run --locked ruff check .
         uv run --locked ruff format --check .
         uv run --locked pytest -q --strict-markers
+        # Linux side of the cross-OS tolerance measurement (README, tolerance).
+        uv run --locked python scripts/measure_prediction_drift.py
 
   - id: "Build Docker image"
     name: "gcr.io/cloud-builders/docker"
@@ -74,7 +84,8 @@ steps:
       - "push"
       - "europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mlops-fri2-teama-bike-demand:$COMMIT_SHA"
 
-  - id: "Deploy to Cloud Run"
+  # New revision with 0% traffic, reachable only through its tag URL.
+  - id: "Deploy new revision without traffic"
     name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     entrypoint: "gcloud"
     args:
@@ -84,12 +95,71 @@ steps:
       - "--image=europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mlops-fri2-teama-bike-demand:$COMMIT_SHA"
       - "--region=europe-west1"
       - "--project=$PROJECT_ID"
+      - "--no-traffic"
+      - "--tag=c-$SHORT_SHA"
+      - "--quiet"
+
+  # The service is private: get identity tokens for the tag URL and for the
+  # service URL (the verifier tries both audiences). Tokens stay in /workspace.
+  - id: "Get identity tokens"
+    name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
+    entrypoint: "bash"
+    args:
+      - "-ceu"
+      - |
+        base=$$(gcloud run services describe mlops-fri2-teama-bike-demand --region=europe-west1 --project=$PROJECT_ID --format="value(status.url)")
+        tag_url="https://c-$SHORT_SHA---$${base#https://}"
+        echo "$$tag_url" > /workspace/tag-url.txt
+        gcloud auth print-identity-token --audiences="$$tag_url" > /workspace/token-tag.txt
+        gcloud auth print-identity-token --audiences="$$base" > /workspace/token-service.txt
+        echo "Checking $$tag_url"
+
+  # The Lab 5 identity check against the NEW revision, before it gets traffic.
+  - id: "Verify new revision"
+    name: "python:3.12-slim"
+    dir: "bike-demand"
+    entrypoint: "bash"
+    args:
+      - "-ceu"
+      - |
+        check() {
+          BIKE_DEMAND_ID_TOKEN=$$(cat "$$1") python3 scripts/verify_deployment.py \
+            --url "$$(cat /workspace/tag-url.txt)" \
+            --expected-model "$$(cat /workspace/expected-model.txt)" \
+            --expected-model-sha256 "$$(cat /workspace/expected-model-sha256.txt)" \
+            --expected-revision "$COMMIT_SHA"
+        }
+        for attempt in 1 2 3 4 5 6; do
+          if check /workspace/token-tag.txt || check /workspace/token-service.txt; then
+            exit 0
+          fi
+          echo "Attempt $$attempt failed; retrying in 10 s"
+          sleep 10
+        done
+        echo "Live check failed: traffic stays on the previous revision."
+        exit 1
+
+  # Only reached when the live check passed.
+  - id: "Route traffic to verified revision"
+    name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
+    entrypoint: "gcloud"
+    args:
+      - "run"
+      - "services"
+      - "update-traffic"
+      - "mlops-fri2-teama-bike-demand"
+      - "--to-tags=c-$SHORT_SHA=100"
+      - "--region=europe-west1"
+      - "--project=$PROJECT_ID"
       - "--quiet"
 
 images:
   - "europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mlops-fri2-teama-bike-demand:$COMMIT_SHA"
 
-timeout: "1200s"
+substitutions:
+  _EXPECTED_MODEL_OVERRIDE: ""
+
+timeout: "1800s"
 
 options:
   logging: CLOUD_LOGGING_ONLY

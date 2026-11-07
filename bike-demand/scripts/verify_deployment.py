@@ -32,6 +32,10 @@ def main() -> int:
         required=True,
         help="Expected deployed code revision",
     )
+    parser.add_argument(
+        "--expected-model-sha256",
+        help="Expected SHA-256 of the served model bytes (from registry/accepted.json)",
+    )
     args = parser.parse_args()
 
     health_url = args.url.rstrip("/") + "/health"
@@ -55,6 +59,10 @@ def main() -> int:
         ("model_version", args.expected_model, health.get("model_version")),
         ("code_revision", args.expected_revision, health.get("code_revision")),
     ]
+    if args.expected_model_sha256 is not None:
+        checks.append(
+            ("model_sha256", args.expected_model_sha256, health.get("model_sha256"))
+        )
 
     failed = False
 

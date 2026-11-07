@@ -24,6 +24,7 @@ class HealthHandler(BaseHTTPRequestHandler):
             {
                 "status": "ok",
                 "model_version": "baseline-f01a22df4c39",
+                "model_sha256": "f" * 64,
                 "code_revision": "abc123",
             }
         ).encode("utf-8")
@@ -38,7 +39,7 @@ class HealthHandler(BaseHTTPRequestHandler):
         pass
 
 
-def run_verifier(expected_model, expected_revision, token=None):
+def run_verifier(expected_model, expected_revision, token=None, extra=()):
     HealthHandler.authorization = None
     env = {k: v for k, v in os.environ.items() if k != "BIKE_DEMAND_ID_TOKEN"}
     if token is not None:
@@ -58,6 +59,7 @@ def run_verifier(expected_model, expected_revision, token=None):
                 expected_model,
                 "--expected-revision",
                 expected_revision,
+                *extra,
             ],
             capture_output=True,
             text=True,
@@ -104,3 +106,16 @@ def test_no_token_sends_no_authorization_header():
     result = run_verifier("baseline-f01a22df4c39", "abc123")
     assert result.returncode == 0
     assert HealthHandler.authorization is None
+
+
+def test_model_digest_is_checked_when_given():
+    # Catches: a service that serves the expected version name with other bytes.
+    good = run_verifier(
+        "baseline-f01a22df4c39", "abc123", extra=("--expected-model-sha256", "f" * 64)
+    )
+    bad = run_verifier(
+        "baseline-f01a22df4c39", "abc123", extra=("--expected-model-sha256", "e" * 64)
+    )
+    assert good.returncode == 0
+    assert bad.returncode == 1
+    assert "model_sha256" in bad.stdout and "FAIL" in bad.stdout
