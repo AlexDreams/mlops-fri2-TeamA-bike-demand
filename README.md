@@ -982,3 +982,17 @@ All rules must pass for a candidate to be eligible. Missing or invalid evidence 
 **Service-side signals:** Cloud Run request events (`jsonPayload.event = "http_request"`) give status, latency, model version and code revision per revision; see [`RUNBOOK.md`](RUNBOOK.md), section 2.3.
 
 **Threshold choice:** with the same model and code, the replay is deterministic (byte-identical predictions measured on Windows and Linux). We open an incident on any success rate below 1.0, any 5xx on `/predict`, or an MAE more than 1.0 bikes/hour above the baseline. No universal target exists; these come from our own measured baseline.
+
+## Final held-test result (Week 5)
+
+The held test period (2012-07-01..2012-12-31, 4,376 rows) was scored **once**, on 2026-11-10, on the model already selected through the gate (`baseline-f01a22df4c39`). It was never used to choose a model.
+
+| Period | Accepted model MAE (bikes/h) | Train-mean baseline MAE |
+|---|---|---|
+| Validation (Jan–Jun 2012) | 86.85 | 154.23 |
+| **Held test (Jul–Dec 2012)** | **93.74** | **182.21** |
+
+- **Raw record:** [`bike-demand/reports/evidence/heldtest-v1.0.0.json`](bike-demand/reports/evidence/heldtest-v1.0.0.json), produced by [`bike-demand/scripts/evaluate_held_test.py`](bike-demand/scripts/evaluate_held_test.py) at commit `b294696`.
+- **Guards:** the script refuses to run twice and refuses model bytes that do not match `registry/accepted.json`.
+- **Reading:** the test half-year is busier (mean 254 vs 215 bikes/hour), so the error is similar relative to demand.
+- **Release notes:** [`RELEASE_NOTES.md`](RELEASE_NOTES.md).
