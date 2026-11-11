@@ -4,6 +4,44 @@
 
 This repository contains the source code for the MLOps learning project (Week 1, Lab 2) focused on predicting bike demand (using the `hour.csv` dataset). The project implements a complete pipeline including strict data validation, chronological partitioning, model training (Random Forest vs. Naive Baseline), and experiment tracking with MLflow.
 
+## System and architecture (v1.0.0)
+
+**Purpose:** predict hourly bike rentals (`cnt`) from 12 calendar and weather features (UCI Bike Sharing, frozen snapshot).
+
+The model is served as a private FastAPI service on Cloud Run:
+
+- `GET /health` reports the loaded `model_version`, `model_sha256` and `code_revision`;
+- `POST /predict` returns the prediction and the `model_version`.
+
+```mermaid
+flowchart LR
+    subgraph Code path
+        PR[Pull request<br/>reviewed] --> CI[GitHub Actions<br/>preflight, Ruff, pytest, Docker app stage]
+        CI --> MAIN[main<br/>protected]
+    end
+    subgraph Model path
+        CAND[Candidate<br/>fit on 2011] --> GATE[Gate<br/>policy committed first]
+        GATE --> DEC[decisions/*.json]
+        DEC -->|eligible only| PROMOTE[promote]
+        PROMOTE --> BUCKET[(Cloud Storage<br/>immutable bundles)]
+        PROMOTE --> PTR[registry/accepted.json<br/>reviewed pointer]
+    end
+    MAIN --> CB[Cloud Build]
+    PTR --> CB
+    BUCKET -->|fetch + SHA-256 check| CB
+    CB -->|tests, build, image identity check| AR[(Artifact Registry<br/>image tagged with commit)]
+    AR -->|deploy at 0% traffic, then switch| RUN[Cloud Run<br/>private service]
+    RUN -->|structured JSON request events| LOGS[Cloud Logging]
+    OP[Operator laptop<br/>verify_deployment.py, monitor_replay.py, RUNBOOK.md] -->|identity token| RUN
+```
+
+**How the parts fit:**
+
+- **Code:** a change reaches `main` only through a reviewed PR with green CI.
+- **Model:** a model becomes "accepted" only through the gate and a reviewed change to `registry/accepted.json`.
+- **Deploy:** on every merge, Cloud Build fetches the accepted bundle and checks its digests. It runs the tests and checks the built image's identity, then deploys a new revision without traffic. It switches traffic to that revision only after these checks pass.
+- **Recovery:** previous revisions and bundles are retained, so recovery is a traffic switch, never a retrain (see [`RUNBOOK.md`](RUNBOOK.md)).
+
 ## Prerequisites
 
 To run this project, you need the following:
@@ -870,7 +908,60 @@ All rules must pass for a candidate to be eligible. Missing or invalid evidence 
 
 ### Pipeline boundary (Thaddée)
 
-<!-- training boundary, overwrite risk, settings guard, stage, entry point, failure, partial, identity -->
+*Candidate training code by Thaddée (PR #40); answers below written by Alexandre.*
+
+**training boundary**
+
+- `train.py` fits the Week 1 random forest on 2011 rows and writes `artifacts/model.joblib`.
+- The Lab 7 pipeline does not call it: `candidate.py` fits on the same 2011 train window only.
+- Validation and test rows are never seen during fitting.
+
+**overwrite risk**
+
+- **Risk:** `joblib.dump(model, artifacts/model.joblib)` in `train.py` would replace the served model before any gate decides.
+- **Choice:** candidates write only to `runs/<run_id>/candidate/`; the served model changes only through `promote` and a reviewed `accepted.json`.
+- **Rejected:** retraining in place.
+
+**settings guard**
+
+- **Choice:** only `n_estimators`, `max_depth` and `min_samples_leaf` may vary, as integers within bounds. Seed 42 and `n_jobs` 1 are fixed. The data path and the 12 ordered features are checked.
+- **Rejected:** free-form settings.
+- **Why:** candidates must differ in model settings only (Lab 7 slide 5), and every change is visible in a reviewed YAML file.
+
+**stage: what does it consume and produce?**
+
+- **Train:** config + frozen snapshot → bundle (model + metadata with digests).
+- **Gate:** bundle + accepted bundle + policy → decision record.
+- **Promote:** eligible decision → bucket + pointer.
+- **Rejected:** one script that trains and overwrites.
+- **Why:** each stage has inspectable inputs and outputs.
+
+**entry point: what does a clean checkout need?**
+
+- **Choice:** `uv run --locked python -m bike_demand.pipeline --candidate configs/candidates/<name>.yaml` from `bike-demand/`.
+- **Requirements:** `uv`, the lock file, and the accepted bundle fetched with `python -m bike_demand.promote fetch`.
+- **Rejected:** several manual commands.
+
+**failure: what can safely be retried?**
+
+- **Choice:** training and gate runs can always be rerun; each run gets a new `run_id`, and nothing accepted changes.
+- **Rejected:** retrying in place.
+- **Why:** a rerun cannot duplicate side effects.
+
+**partial: what happens to incomplete output?**
+
+- Output is written to `runs/<run_id>.partial/` and renamed only when complete.
+- The gate never reads a `.partial` directory, which can be deleted safely.
+
+**identity: which inputs determine this run?**
+
+All of these are recorded in `model-metadata.json`:
+
+- data sha256;
+- training commit and clean tracked files;
+- config sha256;
+- effective settings, including the seed;
+- `run_id`, `model_version` and model sha256.
 
 ### Failure and decisions (Alban)
 
